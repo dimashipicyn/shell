@@ -1,0 +1,3 @@
+[submodule "Dlib"]
+	path = Dlib
+	url = https://github.com/dimashipicyn/Dlib.git
