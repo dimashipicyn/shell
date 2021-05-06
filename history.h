@@ -1,6 +1,5 @@
 #ifndef HISTORY_H
 # define HISTORY_H
-# include "vector.h"
 
 typedef struct s_history
 {

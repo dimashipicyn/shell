@@ -1,6 +1,5 @@
 #include <fcntl.h>
 #include "libft.h"
-#include "vector.h"
 #include "history.h"
 
 t_history	*new_history(void)
@@ -8,7 +7,7 @@ t_history	*new_history(void)
 	t_history	*new;
 
 	new = ft_calloc(1, sizeof(t_history));
-	ASSERT(new != 0);
+	ft_assert(new != 0, "history1.c", "10");
 	return (new);
 }
 
@@ -23,12 +22,16 @@ void	history_load_in_file(t_history *history, char *filename)
 	{
 		while (get_next_line(fd, &line) > 0)
 		{
+			ft_assert(line != 0, "history1.c", "25");
 			new_entry = new_vector(CHAR);
+			ft_assert(new_entry != 0, "history1.c", "26");
 			new_entry->method->load(new_entry, line, ft_strlen(line));
 			free(line);
 			history_push_back(history, new_entry);
 		}
+		ft_assert(line != 0, "history1.c", "32");
 		new_entry = new_vector(CHAR);
+		ft_assert(new_entry != 0, "history1.c", "34");
 		new_entry->method->load(new_entry, line, ft_strlen(line));
 		free(line);
 		history_push_back(history, new_entry);

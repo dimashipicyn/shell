@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "libft.h"
-#include "vector.h"
 #include "term.h"
 #include "history.h"
 #include "readline.h"
@@ -24,32 +23,49 @@ void	print_newlines(int len)
 		ft_putendl_fd("", 1);
 }
 
+enum operator
+{
+	PIPE;
+	FORWARD;
+	BACKWARD;
+	APPENDFOR;
+	APPENDBACK;
+}
+
+typedef struct s_token
+{
+	t_vector		*tok;
+	enum operator	op;
+	int				fd;
+}	t_token;
+
+BOOLEAN is_operator(int character)
+{
+	if (character == '|' || character == '>' || character == '<')
+	{
+		return (TRUE);
+	}
+	return (FALSE);
+}
+
 void	lexer(t_vector *v)
 {
 	char	*ch;
-	t_vector *token;
 	t_vector *tokens;
+	t_vector *token;
 
-	token = new_vector(CHAR);
 	tokens = new_vector(PTR);
-//	while (has_next(v)) {
+	token =  new_vector(CHAR);
 	while (has_next(v))
 	{
 		ch = next(v);
-		ft_printf("\nnext %c", *ch);
-		if (*ch == ' ')
-			break;
-		token->method->push_back(token, &ch);
+		if (is_operator(*ch)) {
+			ft_printf("\nop %c\n", *ch);
+			break ;
+		}
+		token->method->push_back(token, ch);
 	}
-//	tokens->method->push_back(tokens, &token);
-//	}
-	/*
-	while (has_next(tokens))
-	{
-		token = next(tokens);
-		ft_printf("%s\n", token->mem);
-	}
-	*/
+	ft_putendl_fd(token->mem, 1);
 }
 
 int	main(int argc, const char *argv[])

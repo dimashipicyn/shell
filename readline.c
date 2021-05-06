@@ -1,5 +1,4 @@
 #include "libft.h"
-#include "vector.h"
 #include "term.h"
 #include "history.h"
 #include "linenavigation.h"
