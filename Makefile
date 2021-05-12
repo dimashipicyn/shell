@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -Wall -Wextra -g -fsanitize=address# -Werror
+FLAGS = -Wall -Wextra# -g -fsanitize=address# -Werror
 
 SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c ft_assert.c
 OBJ = $(SRCS:.c=.o)
