@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/13 16:14:36 by tphung           ###   ########.fr       */
+/*   Updated: 2021/05/13 17:23:47 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ char		*path_join(char *path_str, char *name)
 	return (path_name);
 }
 
-int			fork_execve(char **argv, char **envp, char *path_name)
+pid_t	fork_execve(char **argv, char **envp, char *path_name)
 {
 	int		stat;
 	pid_t	pid;
@@ -70,15 +70,15 @@ int			fork_execve(char **argv, char **envp, char *path_name)
 	{
 		errno = 0;
 		stat = execve(path_name, argv, envp);
-		ft_errors(0);
+		//ft_errors(0);
 		exit(stat);
 	}
-	else
+	/*else
 	{
 		waitpid(pid, &stat, 0);
 		return (0);
-	}
-	return (0);
+	}*/
+	return (pid);
 }
 
 char	*filename_parser(char *filename, char **envp)
@@ -115,7 +115,7 @@ int	open_pipe(t_main *arg)
 	i = pipe(file_des);
 	if (i != 0)
 	{
-		ft_errors(0);
+		//ft_errors(0);
 		exit(1);
 	}
 	arg->fd_read = file_des[0];
@@ -131,7 +131,7 @@ int	fd_replacement(int old_fd, int new_fd)
 	i = dup2(old_fd, new_fd);
 	if (i < 0)
 	{
-		ft_errors(0);
+		//ft_errors(0);
 		exit(1);
 	}
 	return (0);
@@ -184,7 +184,7 @@ int	do_redir_out(t_main *arg)
 	}
 	if (fd < 0)
 	{
-		ft_errors(0);
+		//ft_errors(0);
 		exit(1);
 	}
 	if (arg->pipe_in == 0)
@@ -207,7 +207,7 @@ int	do_redir_in(t_main *arg)
 	}
 	if (fd < 0)
 	{
-		ft_errors(0);
+		//ft_errors(0);
 		exit(1);
 	}
 	if (arg->pipe_in != 0)
@@ -224,17 +224,18 @@ int	do_redir_in(t_main *arg)
 int			launcher(t_main *arg)
 {
 	char	*str;
+	pid_t	ret;
 
 	errno = 0;
 	do_pipe(arg);
 	errno = 0;
-	do_redir_out(arg);
+	//do_redir_out(arg);
 	errno = 0;
-	do_redir_in(arg);
+	//do_redir_in(arg);
 	errno = 0;
 	str = filename_parser(*(arg->argv + 1), arg->envp);
 	errno = 0;
-	fork_execve(arg->argv + 1, arg->envp, str);
+	ret = fork_execve(arg->argv + 1, arg->envp, str);
 	errno = 0;
 	if (arg->pipe_in || arg->red_in)
 	{
@@ -246,5 +247,5 @@ int			launcher(t_main *arg)
 		fd_replacement(arg->save_fd_write, 1);
 		close(arg->save_fd_write);
 	}
-	return (0);
+	return (ret);
 }
