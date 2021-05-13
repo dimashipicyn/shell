@@ -6,11 +6,13 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/04/12 15:36:31 by tphung           ###   ########.fr       */
+/*   Updated: 2021/05/13 16:14:36 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/header.h"
+#include "./includes/inc.h"
+#include "./includes/structs.h"
+#include "./includes/utils.h"
 
 int			check_exist(char **path, char *file)
 {
@@ -93,7 +95,7 @@ char	*filename_parser(char *filename, char **envp)
 	while(ft_strncmp(envp[i++], "PATH=", 5))
 		;
 	str = envp[--i];
-	path_str = ft_split(str + 5, &delim);
+	path_str = ft_split(str + 5, delim);
 	//printf("%s\n", strerror(errno));
 	i = check_exist(path_str, filename);
 	//if (i < 0)
