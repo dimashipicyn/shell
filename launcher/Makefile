@@ -6,7 +6,7 @@
 #    By: tphung <tphung@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/19 18:37:57 by tphung            #+#    #+#              #
-#    Updated: 2021/05/13 16:12:08 by tphung           ###   ########.fr        #
+#    Updated: 2021/05/18 17:20:14 by tphung           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ FLAGS = -c
 AR = ar
 ARFLAGS = rcs
 
-SRCS = main.c launcher.c ft_errors.c
+SRCS = main.c launcher.c ft_errors.c ./builtins/ft_echo.c ./builtins/ft_pwd.c ./builtins/ft_cd.c
 OBJ = $(SRCS:.c=.o)
 NAME = go
 LIBFT = libft.a
