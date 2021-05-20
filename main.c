@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include "libft.h"
 #include "term.h"
 #include "history.h"
@@ -24,32 +21,40 @@ void	print_newlines(int len)
 		ft_putendl_fd("", 1);
 }
 
-int	main(int argc, const char *argv[], const char **envp)
+void	sh_init(t_sh_data *sh_data, const char **envp)
 {
 	t_history	*history;
-	t_vector	*new_entry;
 	t_vector	*envp_clone;
 
+	ft_setprogname("minishell");
 	init_term();
 	history = new_history();
-	history_load_in_file(history, "test.txt");
 	envp_clone = new_vector(PTR);
-	int i = 0;
-	while (envp[i])
-		i++;
-	envp_clone->method->load(envp_clone, envp, i);
+	if (!envp_clone || !history)
+		ft_eprintf("");
+	history_load_in_file(history, "test.txt");
+	envp_clone->method->load(envp_clone, envp, ft_ptrlen((const void**)envp));
+	*sh_data = (t_sh_data){.history = history, .envp = envp_clone};
 	set_input_mode();
+}
+
+int	main(int argc, const char *argv[], const char **envp)
+{
+	t_sh_data	sh_data;
+	t_vector	*new_entry;
+
+	sh_init(&sh_data, envp);
 	ft_putstr_fd(PROMPT, 1);
 	while (1)
 	{
 		new_entry = new_vector(CHAR);
-		history_push_front(history, new_entry);
-		readline(history);
+		if (!new_entry)
+			ft_eprintf("");
+		history_push_front(sh_data.history, new_entry);
+		readline(sh_data.history);
 		print_newlines(new_entry->size);
-		parse_expression(new_entry, envp_clone);
+		parse_expression(&sh_data, new_entry);
 		ft_putstr_fd(PROMPT, 1);
 	}
-	history_save_to_file(history, "test.txt");
-	reset_input_mode();
 	return (0);
 }

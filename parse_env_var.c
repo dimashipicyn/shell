@@ -1,4 +1,5 @@
 #include "libft.h"
+#include "minishell.h"
 
 static t_vector	*get_env_var(t_vector *expression)
 {
@@ -6,7 +7,8 @@ static t_vector	*get_env_var(t_vector *expression)
 	t_vector	*str;
 
 	str = new_vector(CHAR);
-	ft_assert(!!str, "parse_env_var.c", "9");
+	if (!str)
+		ft_eprintf("");
 	while (has_next(expression))
 	{
 		ch = *(char *)next(expression);
@@ -22,7 +24,7 @@ static t_vector	*get_env_var(t_vector *expression)
 }
 
 void	parse_env_variable(t_vector *expression,
-		t_vector *token, t_vector *envp)
+		t_vector *token, t_sh_data *sh_data)
 {
 	char		*next_env;
 	char		*s;
@@ -35,9 +37,9 @@ void	parse_env_variable(t_vector *expression,
 		delete(parse_env);
 		return ;
 	}
-	while (has_next(envp))
+	while (has_next(sh_data->envp))
 	{
-		next_env = *(char **)next(envp);
+		next_env = *(char **)next(sh_data->envp);
 		s = ft_strchr(next_env, '=');
 		if (!s)
 			continue ;
@@ -48,6 +50,6 @@ void	parse_env_variable(t_vector *expression,
 			break ;
 		}
 	}
-	envp->pos = 0;
+	sh_data->envp->pos = 0;
 	delete(parse_env);
 }

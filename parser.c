@@ -1,84 +1,79 @@
 #include "libft.h"
 #include "minishell.h"
 
-static void	parse_single_quotes(t_vector *expression, t_vector *token)
+void	split_multitoken(t_vector *token, t_vector *tokens)
 {
-	char		*ch;
+	t_vector	*split;
+	t_vector	*temp;
 
-	while (has_next(expression))
+	temp = 0;
+	split = token->method->split(token, " ");
+	if (!split)
+		ft_eprintf("");
+	if (has_next(split))
+		temp = *(t_vector **)next(split);
+	while (has_next(split))
 	{
-		ch = next(expression);
-		if (*ch == '\'')
-			break ;
-		token->method->push_back(token, ch);
+		tokens->method->push_back(tokens, &temp);
+		temp = *(t_vector **)next(split);
 	}
+	if (split->size > 1)
+		token->method->load(token, temp->mem, temp->size);
+	delete(temp);
+	delete(split);
 }
 
-static void	parse_double_quotes(t_vector *expression,
-		t_vector *token, t_vector *envp)
+void	skip_delimiters(t_vector *vector, char *delim)
 {
-	char		sym;
-	char		prev_sym;
+	char	ch;
 
-	sym = 0;
-	while (has_next(expression))
+	while (has_next(vector))
 	{
-		prev_sym = sym;
-		sym = *(char *)next(expression);
-		if (sym == '"' && prev_sym !='\\')
-			break ;
-		else if (sym == '$' && prev_sym !='\\')
-			parse_env_variable(expression, token, envp);
-		else if (sym != '\\' || prev_sym == '\\')
+		ch = *(char *)next(vector);
+		if (!ft_strchr(delim, ch))
 		{
-			token->method->push_back(token, &sym);
-			sym = 0;
+			previous(vector);
+			break ;
 		}
 	}
 }
 
-void	skip_delimeter(t_vector *vector)
-{
+#define SINGLEQUOTE '\''
+#define DOUBLEQUOTE '"'
+#define BACKSLASH '\\'
+#define DOLOR '$'
 
-}
-
-size_t		ft_ptrlen(const void **ptr)
-{
-	const void	**ptr_copy;
-
-	ptr_copy = ptr;
-	while (*ptr_copy)
-		ptr_copy++;
-	return (ptr_copy - ptr);
-}
-
-static t_vector	*get_token(t_vector *expression, t_vector *tokens, t_vector *envp)
+static t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh_data)
 {
 	t_vector	*token;
 	char		sym;
 	char		prev_sym;
 
 	token = new_vector(CHAR);
+	if (!token)
+		ft_eprintf("allocation failed");
 	prev_sym = 0;
+	skip_delimiters(expression, " ");
 	while (has_next(expression))
 	{
 		sym = *(char *)next(expression);
-		if (sym == '\'' && prev_sym !='\\')
-			parse_single_quotes(expression, token);
-		else if (sym == '"' && prev_sym !='\\')
-			parse_double_quotes(expression, token, envp);
-		else if (sym == '$' && prev_sym !='\\')
-			parse_env_variable(expression, token, envp);
-		else if (ft_strchr(" ", sym))
+		if (ft_strchr(" ><|;", sym))
 			break ;
-		else if (sym != '\\' || prev_sym == '\\')
+		if ((sym == SINGLEQUOTE || sym == DOUBLEQUOTE) && prev_sym != BACKSLASH)
+			parse_quotes(expression, token, sh_data, sym);
+		else if (sym == DOLOR && prev_sym != BACKSLASH)
+		{
+			parse_env_variable(expression, token, sh_data);
+			split_multitoken(token, tokens);
+		}
+		else if (sym != BACKSLASH || prev_sym == BACKSLASH)
 			token->method->push_back(token, &sym);
 		prev_sym = sym;
 	}
 	return (token);
 }
 
-void	parse_expression(t_vector *expression, t_vector *envp)
+void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 {
 	t_vector	*tokens;
 	t_vector	*token;
@@ -86,13 +81,15 @@ void	parse_expression(t_vector *expression, t_vector *envp)
 	tokens = new_vector(PTR);
 	while (has_next(expression))
 	{
-		token = get_token(expression, tokens, envp);
+		token = get_token(expression, tokens, sh_data);
 		tokens->method->push_back(tokens, &token);
 	}
-	t_vector	**t;
+	t_vector	*t;
 	while (has_next(tokens))
 	{
-		t = next(tokens);
-		ft_putendl_fd((*t)->mem, 1);
+		t = *(t_vector **)next(tokens);
+		ft_putendl_fd(t->mem, 1);
+		delete(t);
 	}
+	delete(tokens);
 }
