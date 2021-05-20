@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/13 17:23:47 by tphung           ###   ########.fr       */
+/*   Updated: 2021/05/20 19:32:09 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,25 +168,6 @@ int	do_pipe(t_main *arg)
 
 int	do_redir_out(t_main *arg)
 {
-	int	fd;
-
-	if (arg->red_out == 0)
-		return (0);
-	else if (arg->red_out == 1)
-	{
-		fd = open(arg->red_name, O_CREAT | O_WRONLY | O_APPEND | O_TRUNC,
-											S_IRWXU | S_IRWXG | S_IRWXO);
-	}
-	else if (arg->red_out == 2)
-	{
-		fd = open(arg->red_name, O_CREAT | O_WRONLY | O_APPEND,
-											S_IRWXU | S_IRWXG | S_IRWXO);
-	}
-	if (fd < 0)
-	{
-		//ft_errors(0);
-		exit(1);
-	}
 	if (arg->pipe_in == 0)
 		arg->save_fd_write = dup(1);
 	fd_replacement(fd, 1);
@@ -196,20 +177,6 @@ int	do_redir_out(t_main *arg)
 
 int	do_redir_in(t_main *arg)
 {
-	int fd;
-
-	if (arg->red_in == 0)
-		return (0);
-	else if (arg->red_in == 1)
-	{
-		fd = open(arg->red_name, O_RDONLY,
-											S_IRWXU | S_IRWXG | S_IRWXO);
-	}
-	if (fd < 0)
-	{
-		//ft_errors(0);
-		exit(1);
-	}
 	if (arg->pipe_in != 0)
 	{
 		arg->pipe_in = 0;
@@ -221,6 +188,18 @@ int	do_redir_in(t_main *arg)
 	return (0);
 }
 
+int	do_redir(t_main *arg)
+{
+	if (arg->red_out == 0 && arg->red_in == 0)
+		return (0);
+	if (arg->red_in > 0)
+		do_redir_in(arg);
+	if (arg->red_out > 0)
+		do_redir_out(arg);
+	return (1);
+}
+
+
 int			launcher(t_main *arg)
 {
 	char	*str;
@@ -229,9 +208,8 @@ int			launcher(t_main *arg)
 	errno = 0;
 	do_pipe(arg);
 	errno = 0;
-	//do_redir_out(arg);
+	do_redir(arg);
 	errno = 0;
-	//do_redir_in(arg);
 	errno = 0;
 	str = filename_parser(*(arg->argv + 1), arg->envp);
 	errno = 0;

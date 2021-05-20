@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/18 17:22:10 by tphung           ###   ########.fr       */
+/*   Updated: 2021/05/20 16:07:15 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,8 @@
 #include "./includes/structs.h"
 
 int		ft_echo(char **args);
-
 int		ft_pwd(void);
-int		ft_cd(char **args);
-
+int		ft_cd(char **args, char **root_path);
 pid_t	launcher(t_main *arg);
 
 char	**matrix_dup(char	**src)
