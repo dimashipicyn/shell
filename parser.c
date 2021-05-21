@@ -57,8 +57,11 @@ static t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh
 	while (has_next(expression))
 	{
 		sym = *(char *)next(expression);
-		if (ft_strchr(" ><|;", sym))
+		if (ft_strchr(" ><|;", sym) && prev_sym != BACKSLASH)
+		{
+			previous(expression);
 			break ;
+		}
 		if ((sym == SINGLEQUOTE || sym == DOUBLEQUOTE) && prev_sym != BACKSLASH)
 			parse_quotes(expression, token, sh_data, sym);
 		else if (sym == DOLOR && prev_sym != BACKSLASH)
@@ -67,10 +70,71 @@ static t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh
 			split_multitoken(token, tokens);
 		}
 		else if (sym != BACKSLASH || prev_sym == BACKSLASH)
+		{
 			token->method->push_back(token, &sym);
+			sym = 0;
+		}
 		prev_sym = sym;
 	}
 	return (token);
+}
+
+int		open_file(t_vector *expression, t_sh_data * sh_data)
+{
+	t_vector	*token;
+	t_vector	*tokens;
+	int			fd;
+	char		ch;
+
+	ch = 0;
+	if (has_next(expression))
+	{
+		ch = *(char *)next(expression);
+		if (ch != '>')
+			previous(expression);
+	}
+	tokens = new_vector(PTR);
+	if (!tokens)
+		ft_eprintf("");
+	token = get_token(expression, tokens, sh_data);
+	if (ch == '>')
+		fd = open(token->mem, O_APPEND | O_CREAT, 0777);
+	else
+		fd = open(token->mem, O_RDWR | O_CREAT, 0777);
+	if (fd < 0)
+		ft_wprintf("can't open file %s", token->mem);
+	return (fd);
+}
+
+t_vector	*get_operand(t_vector *expression)
+{
+	char		ch;
+	t_vector	*operand;
+
+	operand = new_vector(CHAR);
+	if (!operand)
+		ft_eprintf("");
+	while (has_next(expression))
+	{
+		ch = *(char *)next(expression);
+	}
+
+}
+
+void	parse_operands(t_vector *expression, t_sh_data *sh_data)
+{
+	char		sym;
+	t_vector	*operands;
+	t_vector	*operand;
+
+	operands = new_vector(PTR);
+	if (!operands)
+		ft_eprintf("");
+	while (has_next(expression))
+	{
+		operand = get_operand(t_vector *expression);
+			
+	}
 }
 
 void	parse_expression(t_sh_data *sh_data, t_vector *expression)
@@ -82,8 +146,12 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 	while (has_next(expression))
 	{
 		token = get_token(expression, tokens, sh_data);
-		tokens->method->push_back(tokens, &token);
+		if (token->size != 0)
+			tokens->method->push_back(tokens, &token);
+		parse_operands(expression, sh_data);
 	}
+	/*
+	ft_printf("size %d\n", tokens->size);
 	t_vector	*t;
 	while (has_next(tokens))
 	{
@@ -91,5 +159,6 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 		ft_putendl_fd(t->mem, 1);
 		delete(t);
 	}
+	*/
 	delete(tokens);
 }

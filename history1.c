@@ -18,7 +18,8 @@ void	history_load_in_file(t_history *history, char *filename)
 	char		*line;
 	t_vector	*new_entry;
 
-	fd = open(filename, O_RDONLY);
+	fd = open(filename, O_RDONLY | O_CREAT,
+			S_IRWXU | S_IRWXG | S_IRWXO);
 	if (fd < 0)
 		ft_eprintf("can't open %s", filename);
 	while (get_next_line(fd, &line) > 0)
@@ -49,7 +50,7 @@ void	history_save_to_file(t_history *history, char *filename)
 			S_IRWXU | S_IRWXG | S_IRWXO);
 	if (fd < 0)
 		ft_eprintf("can't open %s", filename);
-	list = history->list;
+	list = history->list->next;
 	while (list)
 	{
 		entry = (t_vector *)list->content;
