@@ -34,7 +34,9 @@ void	sh_init(t_sh_data *sh_data, const char **envp)
 		ft_eprintf("");
 	history_load_in_file(history, "test.txt");
 	envp_clone->method->load(envp_clone, envp, ft_ptrlen((const void**)envp));
+	ft_bzero(sh_data, sizeof(t_sh_data));
 	*sh_data = (t_sh_data){.history = history, .envp = envp_clone};
+	sh_data->exec_params = (t_exec_params){.red_in = -1, .red_out = -1};
 	set_input_mode();
 }
 

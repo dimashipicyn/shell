@@ -24,7 +24,7 @@ typedef struct	s_sh_data
 	t_vector				*envp;
 }	t_sh_data;
 
-void	parse_expression(t_sh_data *sh_data, t_vector *expression);
+BOOLEAN	parse_expression(t_sh_data *sh_data, t_vector *expression);
 void	parse_env_variable(t_vector *expression, t_vector *token, t_sh_data *sh_data);
 BOOLEAN	parse_quotes(t_vector *expression, t_vector *token, t_sh_data *sh_data, char quote);
 
