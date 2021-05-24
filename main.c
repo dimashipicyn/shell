@@ -53,7 +53,11 @@ int	main(int argc, const char *argv[], const char **envp)
 		history_push_front(sh_data.history, new_entry);
 		readline(sh_data.history);
 		print_newlines(new_entry->size);
-		parse_expression(&sh_data, new_entry);
+		if (is_correct_syntax(new_entry))
+			ft_printf("correct\n");
+		else
+			ft_printf("not correct\n");
+	//	parse_expression(&sh_data, new_entry);
 		ft_putstr_fd(PROMPT, 1);
 	}
 	return (0);

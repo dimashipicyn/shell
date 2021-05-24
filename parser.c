@@ -78,7 +78,7 @@ static t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh
 	}
 	return (token);
 }
-
+/*
 int		open_file(t_vector *expression, t_sh_data * sh_data)
 {
 	t_vector	*token;
@@ -137,6 +137,7 @@ void	parse_operands(t_vector *expression, t_sh_data *sh_data)
 	}
 }
 
+*/
 void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 {
 	t_vector	*tokens;
@@ -148,7 +149,7 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 		token = get_token(expression, tokens, sh_data);
 		if (token->size != 0)
 			tokens->method->push_back(tokens, &token);
-		parse_operands(expression, sh_data);
+//		parse_operands(expression, sh_data);
 	}
 	/*
 	ft_printf("size %d\n", tokens->size);
