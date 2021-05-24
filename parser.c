@@ -51,7 +51,7 @@ static t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh
 
 	token = new_vector(CHAR);
 	if (!token)
-		ft_eprintf("allocation failed");
+		ft_eprintf("malloc token");
 	prev_sym = 0;
 	skip_delimiters(expression, " ");
 	while (has_next(expression))
@@ -105,61 +105,103 @@ int		open_file(t_vector *expression, t_sh_data * sh_data)
 		ft_wprintf("can't open file %s", token->mem);
 	return (fd);
 }
-
-t_vector	*get_operand(t_vector *expression)
-{
-	char		ch;
-	t_vector	*operand;
-
-	operand = new_vector(CHAR);
-	if (!operand)
-		ft_eprintf("");
-	while (has_next(expression))
-	{
-		ch = *(char *)next(expression);
-	}
-
-}
-
-void	parse_operands(t_vector *expression, t_sh_data *sh_data)
+*/
+t_vector	*get_operator(t_vector *expression)
 {
 	char		sym;
-	t_vector	*operands;
-	t_vector	*operand;
+	t_vector	*token;
 
-	operands = new_vector(PTR);
-	if (!operands)
-		ft_eprintf("");
+	token = new_vector(CHAR);
+	if (!token)
+		ft_eprintf("malloc token");
+	skip_delimiters(expression, " ");
 	while (has_next(expression))
 	{
-		operand = get_operand(t_vector *expression);
-			
+		sym = *(char *)next(expression);
+		if (!ft_strchr("><", sym))
+		{
+			previous(expression);
+			break ;
+		}
+		token->method->push_back(token, &sym);
+	}
+	return (token);
+}
+
+void	parse_redirects(t_sh_data *sh_data, t_vector *expression, t_vector *redirects)
+{
+	t_vector	*operator;
+	t_vector	*operand;
+	t_vector	*tokens;
+
+	tokens = new_vector(PTR);
+	if (!tokens)
+		ft_eprintf("malloc tokens");
+	while (has_next(expression))
+	{
+		operator = get_operator(expression);
+		if (operator->size == 0)
+		{
+			delete(operator);
+			break ;
+		}
+		operand = get_token(expression, tokens, sh_data);
+		if (tokens->size != 0)
+			ft_wprintf("ambiguous redirect");
+		redirects->method->push_back(redirects, &operator);
+		redirects->method->push_back(redirects, &operand);
+	}
+	delete(tokens);
+}
+
+void	parse_arguments(t_sh_data *sh_data, t_vector *expression, t_vector *args)
+{
+	t_vector	*token;
+
+	while (has_next(expression))
+	{
+		token = get_token(expression, args, sh_data);
+		if (token->size == 0)
+		{
+			delete(token);
+			break ;
+		}
+		args->method->push_back(args, &token);
 	}
 }
 
-*/
 void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 {
-	t_vector	*tokens;
-	t_vector	*token;
+	t_vector	*args;
+	t_vector	*redirects;
 
-	tokens = new_vector(PTR);
+	expression->pos = 0;
+	args = new_vector(PTR);
+	redirects = new_vector(PTR);
+	if (!args || !redirects)
+		ft_eprintf("malloc args or redirects");
 	while (has_next(expression))
 	{
-		token = get_token(expression, tokens, sh_data);
-		if (token->size != 0)
-			tokens->method->push_back(tokens, &token);
-//		parse_operands(expression, sh_data);
+		parse_arguments(sh_data, expression, args);
+		parse_redirects(sh_data, expression, redirects);
 	}
-	/*
-	ft_printf("size %d\n", tokens->size);
+	ft_printf("size args %d\n", args->size);
+	ft_printf("size redi %d\n", redirects->size);
 	t_vector	*t;
-	while (has_next(tokens))
+	ft_putendl_fd("args", 1);
+	while (has_next(args))
 	{
-		t = *(t_vector **)next(tokens);
+		t = *(t_vector **)next(args);
 		ft_putendl_fd(t->mem, 1);
 		delete(t);
 	}
-	*/
-	delete(tokens);
+	ft_putendl_fd("redirects", 1);
+	while (has_next(redirects))
+	{
+		t = *(t_vector **)next(redirects);
+		ft_putendl_fd(t->mem, 1);
+		delete(t);
+	}
+	delete(args);
+	delete(redirects);
 }

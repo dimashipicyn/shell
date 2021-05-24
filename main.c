@@ -57,7 +57,7 @@ int	main(int argc, const char *argv[], const char **envp)
 			ft_printf("correct\n");
 		else
 			ft_printf("not correct\n");
-	//	parse_expression(&sh_data, new_entry);
+		parse_expression(&sh_data, new_entry);
 		ft_putstr_fd(PROMPT, 1);
 	}
 	return (0);
