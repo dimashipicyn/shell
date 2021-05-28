@@ -15,7 +15,8 @@ FLAGS = -c
 AR = ar
 ARFLAGS = rcs
 
-SRCS = main.c launcher.c ft_errors.c ./builtins/ft_echo.c ./builtins/ft_pwd.c ./builtins/ft_cd.c
+SRCS = main.c launcher.c ft_errors.c \
+	./builtins/ft_echo.c ./builtins/ft_pwd.c ./builtins/ft_cd.c
 OBJ = $(SRCS:.c=.o)
 NAME = go
 LIBFT = libft.a

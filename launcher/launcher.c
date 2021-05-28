@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/20 19:32:09 by tphung           ###   ########.fr       */
+/*   Updated: 2021/05/28 14:32:20 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,7 @@ int	do_redir(t_main *arg)
 }
 
 
-int			launcher(t_main *arg)
+int			launcher(t_main *arg, t_vector *envp)
 {
 	char	*str;
 	pid_t	ret;
@@ -211,9 +211,9 @@ int			launcher(t_main *arg)
 	do_redir(arg);
 	errno = 0;
 	errno = 0;
-	str = filename_parser(*(arg->argv + 1), arg->envp);
+	str = filename_parser(*(arg->argv), envp->mem);
 	errno = 0;
-	ret = fork_execve(arg->argv + 1, arg->envp, str);
+	ret = fork_execve(arg->argv, envp->mem, str);
 	errno = 0;
 	if (arg->pipe_in || arg->red_in)
 	{

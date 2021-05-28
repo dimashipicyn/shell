@@ -13,8 +13,8 @@ typedef struct	s_main
 	int			save_fd_write;
 	int			status;
 	char 		**argv;
-	char		**envp;	//vector **envp
-	//vector *(pid_t)pid
+	t_vector	*pids;
+	//char		**envp;	//vector **envp
 }	t_main;
 
 #endif
