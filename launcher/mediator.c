@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/28 14:38:06 by tphung           ###   ########.fr       */
+/*   Updated: 2021/05/28 18:08:49 by lbespin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,13 +66,14 @@ int		mediator(t_main *arg, t_vector *envp)
 			return (-1);//ERROR
 	}
 	pid = launcher(arg, envp);
-	if (arg->pids->method->push_back(arg->pids, &pid) == FALSE)
+	if (arg->pids->method->push_front(arg->pids, &pid) == FALSE)
 		return(-1);//ERROR
 	if (flag == TRUE)
 	{
 		while (has_next(arg->pids))
 		{
 			pid = *(pid_t*)next(arg->pids);
+			//ft_printf("wait work\n");
 			waitpid(pid, &(arg->status), 0);
 		}
 		arg->pids->method->clear(arg->pids);

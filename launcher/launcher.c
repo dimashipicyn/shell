@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/28 17:21:09 by tphung           ###   ########.fr       */
+/*   Updated: 2021/05/28 17:59:40 by lbespin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,22 +206,29 @@ int			launcher(t_main *arg, t_vector *envp)
 	errno = 0;
 	do_pipe(arg);
 	errno = 0;
-	do_redir(arg);
+//	do_redir(arg);
 	errno = 0;
 	errno = 0;
+//	ft_printf("before\n");
 	str = filename_parser(*(arg->argv), envp->mem);
+//	ft_printf("filename parser\n");
 	errno = 0;
 	ret = fork_execve(arg->argv, envp->mem, str);
+//	ft_printf("fork\n");
 	errno = 0;
-	if (arg->pipe_in || arg->red_in)
+	
+	if (arg->pipe_in)
+	//if (arg->pipe_in || arg->red_in)
 	{
 		fd_replacement(arg->save_fd_read, 0);
 		close(arg->save_fd_read);
 	}
+	/*
 	if (arg->red_out)
 	{
 		fd_replacement(arg->save_fd_write, 1);
 		close(arg->save_fd_write);
 	}
+	*/
 	return (ret);
 }

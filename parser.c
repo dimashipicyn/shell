@@ -236,7 +236,10 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 		parse_pipe(sh_data, sym);
 		if (err_not)
 		{
+			ft_printf("");
 			mediator(&(sh_data->exec_params), sh_data->envp);
+		//	sh_data->exec_params.pipe_in = 0;
+		//	sh_data->exec_params.pipe_out = 0;
 		}
 		release_resources(sh_data);
 	}
