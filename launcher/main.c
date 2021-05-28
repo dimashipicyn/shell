@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/20 16:07:15 by tphung           ###   ########.fr       */
+/*   Updated: 2021/05/28 14:47:04 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 int		ft_echo(char **args);
 int		ft_pwd(void);
 int		ft_cd(char **args, char **root_path);
-pid_t	launcher(t_main *arg);
+int		mediator(t_main *arg, t_vector *envp)
 
 char	**matrix_dup(char	**src)
 {
@@ -45,7 +45,7 @@ int		main(int argc, char **argv, char **envp)
 	pid_t	pid_two;
 	int		stat;
 	char**	envp_copy;
-   char *str;
+	char	*str;
 
 	envp_copy = matrix_dup(envp);
 	str = getcwd(NULL, 0);
@@ -87,8 +87,8 @@ int		main(int argc, char **argv, char **envp)
 	arg.pipe_in = 1;
 	arg.pipe_out = 1;
 
-	waitpid(pid_one, &stat, 0);
-	waitpid(pid_two, &stat, 0);
+	waitpid(pid_one, &(arg->status), 0);
+	waitpid(pid_two, &(arg->status), 0);
 
 	des = malloc(sizeof(char*) * 3);
 	des[0] = "cat";

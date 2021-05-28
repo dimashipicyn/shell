@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/28 14:09:48 by tphung           ###   ########.fr       */
+/*   Updated: 2021/05/28 14:38:06 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 int		ft_echo(char **args);
 int		ft_pwd(void);
 int		ft_cd(char **args, char **root_path);
-pid_t	launcher(t_main *arg);
+pid_t	launcher(t_main *arg, t_vector *envp);
 
 char	**matrix_dup(char	**src)
 {
