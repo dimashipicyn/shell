@@ -161,10 +161,35 @@ BOOLEAN	parse_redirects(t_sh_data *sh_data, t_vector *expression)
 	return (is_open);
 }
 
-void	parse_arguments(t_sh_data *sh_data, t_vector *expression, t_vector *args)
+char	**vector_to_argv(t_vector *args)
+{
+	char		**argv;
+	t_vector	*token;
+	int			i;
+
+	i = 0;
+	argv = (char **)ft_calloc(args->size + 1, sizeof(char *));
+	if (!argv)
+		ft_eprintf("malloc argv");
+	args->pos = 0;
+	while (has_next(args))
+	{
+		token = *(t_vector **)next(args);
+		argv[i] = token->mem;
+		i++;
+	}
+	argv[i] = 0;
+	return (argv);
+}
+
+void	parse_arguments(t_sh_data *sh_data, t_vector *expression)
 {
 	t_vector	*token;
+	t_vector	*args;
 
+	args = new_vector(PTR);
+	if (!args)
+		ft_eprintf("malloc args");
 	while (has_next(expression))
 	{
 		token = get_token(expression, args, sh_data);
@@ -173,50 +198,60 @@ void	parse_arguments(t_sh_data *sh_data, t_vector *expression, t_vector *args)
 			delete(token);
 			break ;
 		}
-		args->method->push_back(args, &(token->mem));
+		args->method->push_back(args, &token);
 	}
+	sh_data->exec_params.argv = vector_to_argv(args);
+	args->pos = 0;
+	while (has_next(args))
+	{
+		token = *(t_vector **)next(args);
+		free(token);
+	}
+	delete(args);
 }
 
-BOOLEAN	parse_expression(t_sh_data *sh_data, t_vector *expression)
+void	parse_pipe(t_sh_data *sh_data, char sym)
 {
-	t_vector	*args;
+	sh_data->exec_params.pipe_in = sh_data->exec_params.pipe_out;
+	if (sym == '|')
+		sh_data->exec_params.pipe_out = TRUE;
+	else
+		sh_data->exec_params.pipe_out = FALSE;
+}
+
+void	parse_expression(t_sh_data *sh_data, t_vector *expression)
+{
 	BOOLEAN		err_not;
 	char		sym;
 
 	expression->pos = 0;
-	args = new_vector(PTR);
-	if (!args)
-		ft_eprintf("malloc args");
+	err_not = TRUE;
 	while (has_next(expression))
 	{
-		sym = *(char *)get_next(expression);
-		if (ft_strchr(";|", sym) || !err_not)
-			break ;
-		parse_arguments(sh_data, expression, args);
+		sym = 0;
+		parse_arguments(sh_data, expression);
 		err_not = parse_redirects(sh_data, expression);
+		if (has_next(expression))
+			sym = *(char *)next(expression);
+		parse_pipe(sh_data, sym);
+		if (err_not)
+		{
+			//launch
+			ft_printf("launch\n");
+		}
+		release_resources(sh_data);
 	}
-	if (sym == '|')
-		sh_data->exec_params.pipe_out = 1;
-	else
-	{
-		sh_data->exec_params.pipe_in = sh_data->exec_params.pipe_out;
-		sh_data->exec_params.pipe_out = 0;
-	}
-	sh_data->exec_params.argv = args->mem;
-	free(args);
-	return (err_not);
 }
-	/*
+/*	
 	ft_printf("err_not %s\n", err_not ? "true" : "false");
 	char	*t;
 	ft_putendl_fd("args", 1);
-	while (has_next(args))
+	while (has_next(sh_data->exec_params.argv))
 	{
-		t = *(char **)next(args);
+		t = *(char *)next(args);
 		ft_putendl_fd(t, 1);
 		free(t);
 	}
 	
-	delete(args);
 }
 */
