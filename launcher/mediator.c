@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/28 14:38:06 by tphung           ###   ########.fr       */
+/*   Updated: 2021/05/31 17:13:40 by lbespin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,7 @@ int		check_flags(t_main *arg)
 	int	res;
 
 	res = TRUE;
-	if (arg->pipe_in != FALSE)
-		res = FALSE;
-	if (arg->pipe_in != FALSE)
-		res = FALSE;
-	if (arg->red_in != -1)
-		res = FALSE;
-	if (arg->red_out != -1)
+	if (arg->pipe_out == TRUE)
 		res = FALSE;
 	return (res);
 }
@@ -66,14 +60,16 @@ int		mediator(t_main *arg, t_vector *envp)
 			return (-1);//ERROR
 	}
 	pid = launcher(arg, envp);
-	if (arg->pids->method->push_back(arg->pids, &pid) == FALSE)
+	if (arg->pids->method->push_front(arg->pids, &pid) == FALSE)
 		return(-1);//ERROR
 	if (flag == TRUE)
 	{
+		arg->pids->pos = 0;
 		while (has_next(arg->pids))
 		{
 			pid = *(pid_t*)next(arg->pids);
 			waitpid(pid, &(arg->status), 0);
+			ft_printf("mediator pid %d\n", pid);
 		}
 		arg->pids->method->clear(arg->pids);
 	}
