@@ -65,8 +65,13 @@ t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh_data)
 	return (token);
 }
 
-void	parse_pipe(t_sh_data *sh_data, char sym)
+void	parse_pipe(t_sh_data *sh_data, t_vector *expression)
 {
+	char		sym;
+	
+	sym = 0;
+	if (has_next(expression))
+		sym = *(char *)next(expression);
 	sh_data->exec_params.pipe_in = sh_data->exec_params.pipe_out;
 	if (sym == '|')
 		sh_data->exec_params.pipe_out = TRUE;
@@ -99,23 +104,22 @@ void	release_resources(t_sh_data *sh_data)
 void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 {
 	BOOLEAN		err_not;
-	char		sym;
 
 	expression->pos = 0;
 	err_not = TRUE;
 	while (has_next(expression))
 	{
-		sym = 0;
 		parse_arguments(sh_data, expression);
 		err_not = parse_redirects(sh_data, expression);
-		if (has_next(expression))
-			sym = *(char *)next(expression);
-		parse_pipe(sh_data, sym);
-		if (err_not)
+		parse_pipe(sh_data, expression);
+		if (!err_not)
 		{
-//			print_params(sh_data);
-			mediator(&(sh_data->exec_params), sh_data->envp);
+			release_resources(sh_data);
+			break ;
 		}
+//			print_params(sh_data);
+		mediator(&(sh_data->exec_params), sh_data->envp);
+		ft_printf("status: %d\n", sh_data->exec_params.status);
 		release_resources(sh_data);
 	}
 }
