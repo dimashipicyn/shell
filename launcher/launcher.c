@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/31 17:13:38 by lbespin          ###   ########.fr       */
+/*   Updated: 2021/05/31 17:53:58 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,19 +170,21 @@ int	do_pipe(t_main *arg)
 
 int	do_redir_out(t_main *arg)
 {
-	if (arg->pipe_in == 0)
+	//if (arg->pipe_in == 0)
 		arg->save_fd_write = dup(1);
+	ft_printf("FD red_out = %d\n", arg->red_out);
 	fd_replacement(arg->red_out, 1);
 	return (0);
 }
 
 int	do_redir_in(t_main *arg)
 {
-	if (arg->pipe_in != 0)
-	{
-		arg->pipe_in = 0;
-	}
-	else
+	//if (arg->pipe_in != 0)
+	//{
+		//arg->pipe_in = 0;
+	//}
+	//else
+	if (arg->pipe_in == 0)
 		arg->save_fd_read = dup(0);
 	fd_replacement(arg->red_in, 0);
 	return (0);
@@ -190,7 +192,7 @@ int	do_redir_in(t_main *arg)
 
 int	do_redir(t_main *arg)
 {
-	if (arg->red_out == 0 && arg->red_in == 0)
+	if (arg->red_out == -1 && arg->red_in == -1)
 		return (0);
 	if (arg->red_in > 0)
 		do_redir_in(arg);
@@ -208,7 +210,7 @@ int			launcher(t_main *arg, t_vector *envp)
 	errno = 0;
 	do_pipe(arg);
 	errno = 0;
-//	do_redir(arg);
+	do_redir(arg);
 	errno = 0;
 	errno = 0;
 //	ft_printf("before\n");
@@ -219,18 +221,16 @@ int			launcher(t_main *arg, t_vector *envp)
 //	ft_printf("fork\n");
 	errno = 0;
 	
-	if (arg->pipe_in)
-	//if (arg->pipe_in || arg->red_in)
+	//if (arg->pipe_in)
+	if (arg->pipe_in || arg->red_in > 0)
 	{
 		fd_replacement(arg->save_fd_read, 0);
 		close(arg->save_fd_read);
 	}
-	/*
-	if (arg->red_out)
+	if (arg->red_out > 0)
 	{
 		fd_replacement(arg->save_fd_write, 1);
 		close(arg->save_fd_write);
 	}
-	*/
 	return (ret);
 }
