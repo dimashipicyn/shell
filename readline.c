@@ -3,12 +3,13 @@
 #include "history.h"
 #include "linenavigation.h"
 
-static void	add_char(t_vector *buf, char ch, int *position)
+static void	add_char(t_vector *buf, char *s, int *position)
 {
-	if (ft_isprint(ch))
+	while (*s && ft_isprint(*s))
 	{
-		buf->method->insert(buf, &ch, *position);
+		buf->method->insert(buf, s, *position);
 		*position += 1;
+		s++;
 	}
 }
 
@@ -37,28 +38,28 @@ void	close_minishell(char *s, t_history *history, BOOLEAN emptybuf)
 void	readline(t_history *history)
 {
 	int			cursor;
-	char		s[4];
+	char		s[1000];
 	t_vector	*entry;
-	t_vector	*new_entry;
+	t_vector	*buf;
 
 	cursor = 0;
 	entry = history_get_entry(history);
-	new_entry = entry;
+	buf = new_vector(CHAR);
+	if (!buf)
+		ft_eprintf("malloc readline");
+	ft_bzero(s, 1000);
 	while (!ft_isnewline(*s))
 	{
-		if (is_empty_stdin())
-			continue ;
-		ft_bzero(s, 4);
-		read(0, s, 3);
-		close_minishell(s, history, !new_entry->size);
+		ft_bzero(s, 1000);
+		read(0, s, 1000);
 		move_left(cursor);
-		new_entry = move_history(history, s, &cursor);
-		move_cursor(s, &cursor, new_entry->size);
-		delete_char(new_entry, *s, &cursor);
-		add_char(new_entry, *s, &cursor);
+		close_minishell(s, history, !buf->size);
+		navigation(buf, history, s, &cursor);
+		delete_char(buf, *s, &cursor);
+		add_char(buf, s, &cursor);
 		command("cd", 0, 0);
-		ft_putstr_fd(new_entry->mem, 1);
-		move_left(new_entry->size - cursor);
+		ft_putstr_fd(buf->mem, 1);
+		move_left(buf->size - cursor);
 	}
-	entry->method->load(entry, new_entry->mem, new_entry->size);
+	entry->method->load(entry, buf->mem, buf->size);
 }

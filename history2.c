@@ -22,7 +22,7 @@ t_vector	*history_next_entry(t_history *history)
 
 	if (history->size == 0)
 		return (0);
-	if (history->head < history->size - 1)
+	if (history->head < history->size - 2)
 		history->head += 1;
 	list = ft_list_at(history->list, history->head);
 	entry = list->content;
