@@ -16,16 +16,20 @@ void	move_left(int n)
 void	navigation(t_vector *buf, t_history *history, char *escape, int *cursor)
 {
 	t_vector	*entry;
+	t_vector	*old_entry;
 
+	old_entry = history_get_entry(history);
 	if (!ft_strcmp(escape, DOWN_KEY))
 	{
 		entry = history_prev_entry(history);
+		old_entry->method->load(old_entry, buf->mem, buf->size);
 		buf->method->load(buf, entry->mem, entry->size);
 		*cursor = entry->size;
 	}
 	if (!ft_strcmp(escape, UP_KEY))
 	{
 		entry = history_next_entry(history);
+		old_entry->method->load(old_entry, buf->mem, buf->size);
 		buf->method->load(buf, entry->mem, entry->size);
 		*cursor = entry->size;
 	}

@@ -15,10 +15,11 @@ LFT = libft.a
 all: lib $(SRCS) $(NAME)
 
 $(NAME): $(OBJ)
-		gcc $(FLAGS) $(OBJ) -o $(NAME) -ltermcap -LDlib -lft -IDlib
+		gcc $(FLAGS) $(OBJ) $(LFT) -o $(NAME) -ltermcap -IDlib
 
 lib:
 		make -C Dlib
+		cp Dlib/$(LFT) .
 
 .c.o: $(SRCS)
 		$(CC) $(FLAGS) -c $< -IDlib
