@@ -34,30 +34,9 @@ void	sh_init(t_sh_data *sh_data, const char **envp)
 		ft_eprintf("");
 	history_load_in_file(history, "test.txt");
 	envp_clone->method->load(envp_clone, envp, ft_ptrlen((const void**)envp));
-	ft_bzero(sh_data, sizeof(t_sh_data));
 	*sh_data = (t_sh_data){.history = history, .envp = envp_clone};
 	sh_data->exec_params = (t_exec_params){.red_in = -1, .red_out = -1};
 	set_input_mode();
-}
-
-void	free_array_string(char	**array)
-{
-	int	i;
-
-	i = 0;
-	while (array[i])
-		free(array[i++]);
-	free(array);
-}
-
-void	release_resources(t_sh_data *sh_data)
-{
-	close(sh_data->exec_params.red_in);
-	close(sh_data->exec_params.red_out);
-	sh_data->exec_params.red_in = -1;
-	sh_data->exec_params.red_in = -1;
-	free_array_string(sh_data->exec_params.argv);
-	sh_data->exec_params.argv = 0;
 }
 
 int	main(int argc, const char *argv[], const char **envp)
@@ -75,11 +54,11 @@ int	main(int argc, const char *argv[], const char **envp)
 		history_push_front(sh_data.history, new_entry);
 		readline(sh_data.history);
 		print_newlines(new_entry->size);
-//		if (is_correct_syntax(new_entry))
-//			ft_printf("correct\n");
-//		else
-//			ft_printf("not correct\n");
-		parse_expression(&sh_data, new_entry);
+		if (is_correct_syntax(new_entry))
+		{
+			ft_printf("correct\n");
+	//		parse_expression(&sh_data, new_entry);
+		}
 		ft_putstr_fd(PROMPT, 1);
 	}
 	return (0);

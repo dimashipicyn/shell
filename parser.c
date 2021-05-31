@@ -219,6 +219,38 @@ void	parse_pipe(t_sh_data *sh_data, char sym)
 		sh_data->exec_params.pipe_out = FALSE;
 }
 
+void	print_params(t_sh_data *sh_data)
+{
+	t_exec_params ex;
+	int	i = 0;
+	ex = sh_data->exec_params;
+	ft_putendl_fd("argv", 1);
+	while (ex.argv[i])
+		ft_putendl_fd(ex.argv[i++], 1);
+	ft_printf("pipe_out %d\n", ex.pipe_out);
+	ft_printf("pipe_in %d\n", ex.pipe_in);
+}
+
+void	free_array_string(char	**array)
+{
+	int	i;
+
+	i = 0;
+	while (array[i])
+		free(array[i++]);
+	free(array);
+}
+
+void	release_resources(t_sh_data *sh_data)
+{
+	close(sh_data->exec_params.red_in);
+	close(sh_data->exec_params.red_out);
+	sh_data->exec_params.red_in = -1;
+	sh_data->exec_params.red_in = -1;
+	free_array_string(sh_data->exec_params.argv);
+	sh_data->exec_params.argv = 0;
+}
+
 void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 {
 	BOOLEAN		err_not;
@@ -236,24 +268,9 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 		parse_pipe(sh_data, sym);
 		if (err_not)
 		{
-			ft_printf("");
+			print_params(sh_data);
 			mediator(&(sh_data->exec_params), sh_data->envp);
-		//	sh_data->exec_params.pipe_in = 0;
-		//	sh_data->exec_params.pipe_out = 0;
 		}
 		release_resources(sh_data);
 	}
 }
-/*	
-	ft_printf("err_not %s\n", err_not ? "true" : "false");
-	char	*t;
-	ft_putendl_fd("args", 1);
-	while (has_next(sh_data->exec_params.argv))
-	{
-		t = *(char *)next(args);
-		ft_putendl_fd(t, 1);
-		free(t);
-	}
-	
-}
-*/
