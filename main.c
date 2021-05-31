@@ -1,11 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include "libft.h"
-#include "vector.h"
 #include "term.h"
 #include "history.h"
 #include "readline.h"
+#include "minishell.h"
 
 #define PROMPT "\033[32mminishell:> \033[0m"
 #define RIGHT_KEY "\E[C"
@@ -24,54 +21,66 @@ void	print_newlines(int len)
 		ft_putendl_fd("", 1);
 }
 
-void	lexer(t_vector *v)
-{
-	char	*ch;
-	t_vector *token;
-	t_vector *tokens;
-
-	token = new_vector(CHAR);
-	tokens = new_vector(PTR);
-//	while (has_next(v)) {
-	while (has_next(v))
-	{
-		ch = next(v);
-		ft_printf("\nnext %c", *ch);
-		if (*ch == ' ')
-			break;
-		token->method->push_back(token, &ch);
-	}
-//	tokens->method->push_back(tokens, &token);
-//	}
-	/*
-	while (has_next(tokens))
-	{
-		token = next(tokens);
-		ft_printf("%s\n", token->mem);
-	}
-	*/
-}
-
-int	main(int argc, const char *argv[])
+void	sh_init(t_sh_data *sh_data, const char **envp)
 {
 	t_history	*history;
-	t_vector	*new_entry;
+	t_vector	*envp_clone;
 
+	ft_setprogname("minishell");
 	init_term();
 	history = new_history();
+	envp_clone = new_vector(PTR);
+	if (!envp_clone || !history)
+		ft_eprintf("");
 	history_load_in_file(history, "test.txt");
+	envp_clone->method->load(envp_clone, envp, ft_ptrlen((const void**)envp));
+	ft_bzero(sh_data, sizeof(t_sh_data));
+	*sh_data = (t_sh_data){.history = history, .envp = envp_clone};
+	sh_data->exec_params = (t_exec_params){.red_in = -1, .red_out = -1};
 	set_input_mode();
+}
+
+void	free_array_string(char	**array)
+{
+	int	i;
+
+	i = 0;
+	while (array[i])
+		free(array[i++]);
+	free(array);
+}
+
+void	release_resources(t_sh_data *sh_data)
+{
+	close(sh_data->exec_params.red_in);
+	close(sh_data->exec_params.red_out);
+	sh_data->exec_params.red_in = -1;
+	sh_data->exec_params.red_in = -1;
+	free_array_string(sh_data->exec_params.argv);
+	sh_data->exec_params.argv = 0;
+}
+
+int	main(int argc, const char *argv[], const char **envp)
+{
+	t_sh_data	sh_data;
+	t_vector	*new_entry;
+
+	sh_init(&sh_data, envp);
 	ft_putstr_fd(PROMPT, 1);
 	while (1)
 	{
 		new_entry = new_vector(CHAR);
-		history_push_front(history, new_entry);
-		readline(history);
+		if (!new_entry)
+			ft_eprintf("");
+		history_push_front(sh_data.history, new_entry);
+		readline(sh_data.history);
 		print_newlines(new_entry->size);
-		lexer(new_entry);
+//		if (is_correct_syntax(new_entry))
+//			ft_printf("correct\n");
+//		else
+//			ft_printf("not correct\n");
+		parse_expression(&sh_data, new_entry);
 		ft_putstr_fd(PROMPT, 1);
 	}
-	history_save_to_file(history, "test.txt");
-	reset_input_mode();
 	return (0);
 }

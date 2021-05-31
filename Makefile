@@ -1,7 +1,8 @@
 CC = gcc
-FLAGS = -Wall -Wextra -g -fsanitize=address# -Werror
+FLAGS = -Wall -Wextra# -g -fsanitize=address# -Werror
 
-SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c
+SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c ft_assert.c\
+	   parser.c parse_env_var.c parse_quotes.c syntax_validator.c
 OBJ = $(SRCS:.c=.o)
 NAME = minishell
 LFT = libft.a
@@ -11,14 +12,14 @@ LFT = libft.a
 all: $(LFT) $(SRCS) $(NAME)
 
 $(NAME): $(OBJ)
-		gcc $(FLAGS) $(OBJ) $(LFT) -o $(NAME) -ltermcap -Ilft
+		gcc $(FLAGS) $(OBJ) $(LFT) -o $(NAME) -ltermcap -IDlib
 
 $(LFT):
-		make -C lft
-		cp lft/$(LFT) .
+		make -C Dlib
+		cp Dlib/$(LFT) .
 
 .c.o: $(SRCS)
-		$(CC) $(FLAGS) -c $< -Ilft
+		$(CC) $(FLAGS) -c $< -IDlib
 
 clean:
 		@rm -rf $(OBJ)
