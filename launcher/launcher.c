@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/28 17:59:40 by lbespin          ###   ########.fr       */
+/*   Updated: 2021/05/31 17:13:38 by lbespin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,14 @@ pid_t	fork_execve(char **argv, char **envp, char *path_name)
 		stat = execve(path_name, argv, envp);
 		//ft_errors(0);
 		exit(stat);
-	}
-	/*else
+	} /*
+	else
 	{
 		waitpid(pid, &stat, 0);
 		return (0);
-	}*/
+	}
+	*/
+	ft_printf("exec pid %d\n", pid);
 	return (pid);
 }
 
