@@ -1,6 +1,6 @@
 CC = gcc
 FLAGS = -Wall -Wextra -g -fsanitize=address# -Werror
-VPATH := launcher:launcher/builtins 
+VPATH := launcher:launcher/builtins:Dlib 
 SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c\
 	   parser.c parse_env_var.c parse_quotes.c syntax_validator.c\
 	   parse_argument.c parse_redirect.c
@@ -10,16 +10,15 @@ OBJ = $(SRCS:.c=.o)
 NAME = minishell
 LFT = libft.a
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re lib
 
-all: $(LFT) $(SRCS) $(NAME)
+all: lib $(SRCS) $(NAME)
 
 $(NAME): $(OBJ)
-		gcc $(FLAGS) $(OBJ) $(LFT) -o $(NAME) -ltermcap -IDlib
+		gcc $(FLAGS) $(OBJ) -o $(NAME) -ltermcap -LDlib -lft -IDlib
 
-$(LFT):
+lib:
 		make -C Dlib
-		cp Dlib/$(LFT) .
 
 .c.o: $(SRCS)
 		$(CC) $(FLAGS) -c $< -IDlib
