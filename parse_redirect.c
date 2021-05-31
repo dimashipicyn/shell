@@ -16,17 +16,13 @@ BOOLEAN	open_file(t_sh_data *sh_data, char *op, char *filename)
 {
 	BOOLEAN	is_open;
 
+	is_open = TRUE;
 	if (!ft_strcmp(op, ">>"))
 		is_open = reopen_file(filename, O_APPEND | O_CREAT, 0644, &(sh_data->exec_params.red_out));
 	else if (!ft_strcmp(op, ">"))
 		is_open = reopen_file(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644, &(sh_data->exec_params.red_out));
 	else if (!ft_strcmp(op, "<"))
 		is_open = reopen_file(filename, O_RDONLY, 0644, &(sh_data->exec_params.red_in));
-	else
-	{
-		ft_wprintf("unexpected token: %s", op);
-		is_open = FALSE;
-	}
 	if (errno)
 		ft_wprintf("can't open file %s", filename);
 	errno = 0;

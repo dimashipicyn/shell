@@ -20,7 +20,8 @@ void	split_multitoken(t_vector *token, t_vector *tokens)
 		temp = *(t_vector **)next(split);
 	while (has_next(split))
 	{
-		tokens->method->push_back(tokens, &temp);
+		tokens->method->push_back(tokens, &(temp->mem));
+		free(temp);
 		temp = *(t_vector **)next(split);
 	}
 	if (split->size > 1)
@@ -56,11 +57,9 @@ t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh_data)
 			split_multitoken(token, tokens);
 		}
 		else if (sym != BACKSLASH || prev_sym == BACKSLASH)
-		{
 			token->method->push_back(token, &sym);
-			sym = 0;
-		}
-		prev_sym = sym;
+		else
+			prev_sym = sym;
 	}
 	return (token);
 }
@@ -112,14 +111,13 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 		parse_arguments(sh_data, expression);
 		err_not = parse_redirects(sh_data, expression);
 		parse_pipe(sh_data, expression);
+		print_params(sh_data);
 		if (!err_not)
 		{
 			release_resources(sh_data);
 			break ;
 		}
-//			print_params(sh_data);
-		mediator(&(sh_data->exec_params), sh_data->envp);
-		ft_printf("status: %d\n", sh_data->exec_params.status);
+		//mediator(&(sh_data->exec_params), sh_data->envp);
 		release_resources(sh_data);
 	}
 }
