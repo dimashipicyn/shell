@@ -1,7 +1,7 @@
 CC = gcc
 FLAGS = -Wall -Wextra -g -fsanitize=address# -Werror
 VPATH := launcher:launcher/builtins 
-SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c ft_assert.c\
+SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c \
 	   parser.c parse_env_var.c parse_quotes.c syntax_validator.c
 
 SRCS += mediator.c launcher.c ft_errors.c ft_echo.c ft_pwd.c ft_cd.c

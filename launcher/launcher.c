@@ -100,6 +100,11 @@ char	*filename_parser(char *filename, char **envp)
 	path_str = ft_split(str + 5, delim);
 	//printf("%s\n", strerror(errno));
 	i = check_exist(path_str, filename);
+	if (i < 0)
+	{
+		free(path_str);
+		return (NULL);
+	}
 	//if (i < 0)
 	//	printf("%s\n", strerror(errno));
 	str = path_join(path_str[i], filename);
@@ -207,6 +212,7 @@ int			launcher(t_main *arg, t_vector *envp)
 	char	*str;
 	pid_t	ret;
 
+	ret = 0;
 	errno = 0;
 	do_pipe(arg);
 	errno = 0;
@@ -215,9 +221,12 @@ int			launcher(t_main *arg, t_vector *envp)
 	errno = 0;
 //	ft_printf("before\n");
 	str = filename_parser(*(arg->argv), envp->mem);
+	if (str)
+		ret = fork_execve(arg->argv, envp->mem, str);
+	else
+		ft_wprintf("%s", *(arg->argv));
 //	ft_printf("filename parser\n");
-	errno = 0;
-	ret = fork_execve(arg->argv, envp->mem, str);
+	//errno = 0;
 //	ft_printf("fork\n");
 	errno = 0;
 	
