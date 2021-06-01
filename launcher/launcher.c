@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/31 17:53:58 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/01 17:02:47 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 int			check_exist(char **path, char *file)
 {
 	int				i;
-	size_t			l_f;
+	//size_t			l_f;
 	DIR				*papka;
 	struct dirent	*example;
 
@@ -29,8 +29,9 @@ int			check_exist(char **path, char *file)
 		{
 			while ((example = readdir(papka)))
 			{
-				l_f = (size_t)ft_strlen(example->d_name);
-				if (ft_strncmp(example->d_name, file, l_f) == 0)
+				//l_f = (size_t)ft_strlen(example->d_name);
+				//if (ft_strncmp(example->d_name, file, l_f) == 0)
+				if (ft_strcmp(example->d_name, file) == 0)
 				{
 					closedir(papka);
 					return (i);
@@ -92,24 +93,21 @@ char	*filename_parser(char *filename, char **envp)
 
 	i = 0;
 	delim = ':';
+	if (!filename)
+		return(NULL);
 	if (ft_strchr("./", filename[0]))
 		return (filename);
 	while(ft_strncmp(envp[i++], "PATH=", 5))
 		;
 	str = envp[--i];
 	path_str = ft_split(str + 5, delim);
-	//printf("%s\n", strerror(errno));
 	i = check_exist(path_str, filename);
 	if (i < 0)
 	{
 		free(path_str);
 		return (NULL);
 	}
-	//if (i < 0)
-	//	printf("%s\n", strerror(errno));
 	str = path_join(path_str[i], filename);
-	//if (str == 0)
-	//	printf("%s\n", strerror(errno));
 	return (str);
 }
 
@@ -214,23 +212,19 @@ int			launcher(t_main *arg, t_vector *envp)
 
 	ret = 0;
 	errno = 0;
-	do_pipe(arg);
-	errno = 0;
-	do_redir(arg);
-	errno = 0;
-	errno = 0;
-//	ft_printf("before\n");
 	str = filename_parser(*(arg->argv), envp->mem);
 	if (str)
+	{
+		errno = 0;
+		do_pipe(arg);
+		errno = 0;
+		do_redir(arg);
+		errno = 0;
 		ret = fork_execve(arg->argv, envp->mem, str);
+	}
 	else
 		ft_wprintf("%s", *(arg->argv));
-//	ft_printf("filename parser\n");
-	//errno = 0;
-//	ft_printf("fork\n");
 	errno = 0;
-	
-	//if (arg->pipe_in)
 	if (arg->pipe_in || arg->red_in > 0)
 	{
 		fd_replacement(arg->save_fd_read, 0);
