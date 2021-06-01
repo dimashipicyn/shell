@@ -56,7 +56,6 @@ int	main(int argc, const char *argv[], const char **envp)
 		print_newlines(new_entry->size);
 		if (is_correct_syntax(new_entry))
 		{
-	//		ft_printf("correct\n");
 			parse_expression(&sh_data, new_entry);
 		}
 		ft_putstr_fd(PROMPT, 1);
