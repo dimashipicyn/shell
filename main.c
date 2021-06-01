@@ -10,7 +10,7 @@
 #define UP_KEY "\E[A"
 #define DOWN_KEY "\E[B"
 
-void	print_newlines(int len)
+static void	print_newlines(int len)
 {
 	int	newlines;
 	int	column;
@@ -21,7 +21,21 @@ void	print_newlines(int len)
 		ft_putendl_fd("", 1);
 }
 
-void	sh_init(t_sh_data *sh_data, const char **envp)
+static void	envp_copy(t_vector *envp_copy, const char **envp)
+{
+	char	*dup;
+
+	while (*envp)
+	{
+		dup = ft_strdup(*envp);
+		if (!dup)
+			ft_eprintf("ft_strdup");
+		envp_copy->method->push_back(envp_copy, &dup);
+		envp++;
+	}
+}
+
+static void	sh_init(t_sh_data *sh_data, const char **envp)
 {
 	t_history	*history;
 	t_vector	*envp_clone;
@@ -33,7 +47,7 @@ void	sh_init(t_sh_data *sh_data, const char **envp)
 	if (!envp_clone || !history)
 		ft_eprintf("");
 	history_load_in_file(history, "test.txt");
-	envp_clone->method->load(envp_clone, envp, ft_ptrlen((const void**)envp));
+	envp_copy(envp_clone, envp);
 	*sh_data = (t_sh_data){.history = history, .envp = envp_clone};
 	sh_data->exec_params = (t_exec_params){.red_in = -1, .red_out = -1};
 	set_input_mode();
