@@ -60,13 +60,12 @@ BOOLEAN	parse_redirects(t_sh_data *sh_data, t_vector *expression)
 
 	tokens = new_vector(PTR);
 	if (!tokens)
-		ft_eprintf("malloc tokens");
+		ft_eprintf("malloc parse_redirects");
 	while (has_next(expression))
 	{
 		operator = get_operator(expression);
 		if (operator->size == 0 || !is_open)
 		{
-			ft_printf("redir %d\n", expression->pos);
 			delete(operator);
 			break ;
 		}
