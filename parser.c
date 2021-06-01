@@ -83,11 +83,12 @@ void	print_params(t_sh_data *sh_data)
 	t_exec_params ex;
 	int	i = 0;
 	ex = sh_data->exec_params;
-	ft_putendl_fd("argv", 1);
 	while (ex.argv[i])
 		ft_putendl_fd(ex.argv[i++], 1);
 	ft_printf("pipe_out %d\n", ex.pipe_out);
 	ft_printf("pipe_in %d\n", ex.pipe_in);
+	ft_printf("red_in %d\n", ex.red_in);
+	ft_printf("red_out %d\n", ex.red_out);
 }
 
 void	release_resources(t_sh_data *sh_data)
@@ -117,7 +118,8 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 			release_resources(sh_data);
 			break ;
 		}
-		//mediator(&(sh_data->exec_params), sh_data->envp);
+		errno = 0;
+		mediator(&(sh_data->exec_params), sh_data->envp);
 		release_resources(sh_data);
 	}
 }

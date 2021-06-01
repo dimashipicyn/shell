@@ -66,6 +66,7 @@ BOOLEAN	parse_redirects(t_sh_data *sh_data, t_vector *expression)
 		operator = get_operator(expression);
 		if (operator->size == 0 || !is_open)
 		{
+			ft_printf("redir %d\n", expression->pos);
 			delete(operator);
 			break ;
 		}
