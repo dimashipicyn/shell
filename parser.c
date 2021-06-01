@@ -20,7 +20,8 @@ void	split_multitoken(t_vector *token, t_vector *tokens)
 		temp = *(t_vector **)next(split);
 	while (has_next(split))
 	{
-		tokens->method->push_back(tokens, &temp);
+		tokens->method->push_back(tokens, &(temp->mem));
+		free(temp);
 		temp = *(t_vector **)next(split);
 	}
 	if (split->size > 1)
@@ -56,17 +57,20 @@ t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh_data)
 			split_multitoken(token, tokens);
 		}
 		else if (sym != BACKSLASH || prev_sym == BACKSLASH)
-		{
 			token->method->push_back(token, &sym);
-			sym = 0;
-		}
-		prev_sym = sym;
+		else
+			prev_sym = sym;
 	}
 	return (token);
 }
 
-void	parse_pipe(t_sh_data *sh_data, char sym)
+void	parse_pipe(t_sh_data *sh_data, t_vector *expression)
 {
+	char		sym;
+	
+	sym = 0;
+	if (has_next(expression))
+		sym = *(char *)next(expression);
 	sh_data->exec_params.pipe_in = sh_data->exec_params.pipe_out;
 	if (sym == '|')
 		sh_data->exec_params.pipe_out = TRUE;
@@ -79,11 +83,12 @@ void	print_params(t_sh_data *sh_data)
 	t_exec_params ex;
 	int	i = 0;
 	ex = sh_data->exec_params;
-	ft_putendl_fd("argv", 1);
 	while (ex.argv[i])
 		ft_putendl_fd(ex.argv[i++], 1);
 	ft_printf("pipe_out %d\n", ex.pipe_out);
 	ft_printf("pipe_in %d\n", ex.pipe_in);
+	ft_printf("red_in %d\n", ex.red_in);
+	ft_printf("red_out %d\n", ex.red_out);
 }
 
 void	release_resources(t_sh_data *sh_data)
@@ -99,23 +104,22 @@ void	release_resources(t_sh_data *sh_data)
 void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 {
 	BOOLEAN		err_not;
-	char		sym;
 
 	expression->pos = 0;
 	err_not = TRUE;
 	while (has_next(expression))
 	{
-		sym = 0;
 		parse_arguments(sh_data, expression);
 		err_not = parse_redirects(sh_data, expression);
-		if (has_next(expression))
-			sym = *(char *)next(expression);
-		parse_pipe(sh_data, sym);
-		if (err_not)
+		parse_pipe(sh_data, expression);
+		print_params(sh_data);
+		if (!err_not)
 		{
-//			print_params(sh_data);
-			mediator(&(sh_data->exec_params), sh_data->envp);
+			release_resources(sh_data);
+			break ;
 		}
+		errno = 0;
+		mediator(&(sh_data->exec_params), sh_data->envp);
 		release_resources(sh_data);
 	}
 }

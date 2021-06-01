@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -Wall -Wextra -g -fsanitize=address# -Werror
+FLAGS = -Wall -Wextra# -g -fsanitize=address# -Werror
 VPATH := launcher:launcher/builtins:Dlib 
 SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c\
 	   parser.c parse_env_var.c parse_quotes.c syntax_validator.c\
@@ -15,10 +15,11 @@ LFT = libft.a
 all: lib $(SRCS) $(NAME)
 
 $(NAME): $(OBJ)
-		gcc $(FLAGS) $(OBJ) -o $(NAME) -ltermcap -LDlib -lft -IDlib
+		gcc $(FLAGS) $(OBJ) $(LFT) -o $(NAME) -ltermcap -IDlib
 
 lib:
 		make -C Dlib
+		cp Dlib/$(LFT) .
 
 .c.o: $(SRCS)
 		$(CC) $(FLAGS) -c $< -IDlib

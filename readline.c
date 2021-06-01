@@ -62,4 +62,5 @@ void	readline(t_history *history)
 		move_left(buf->size - cursor);
 	}
 	entry->method->load(entry, buf->mem, buf->size);
+	delete(buf);
 }
