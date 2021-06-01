@@ -18,7 +18,7 @@ static void	print_newlines(int len)
 	column = get_term_size();
 	newlines = (len + 11) / column;
 	while (newlines-- >= 0)
-		ft_putendl_fd("", 1);
+		ft_putendl_fd("", 2);
 }
 
 static void	envp_copy(t_vector *envp_copy, const char **envp)
@@ -59,7 +59,7 @@ int	main(int argc, const char *argv[], const char **envp)
 	t_vector	*new_entry;
 
 	sh_init(&sh_data, envp);
-	ft_putstr_fd(PROMPT, 1);
+	ft_putstr_fd(PROMPT, 2);
 	while (1)
 	{
 		new_entry = new_vector(CHAR);
@@ -72,7 +72,7 @@ int	main(int argc, const char *argv[], const char **envp)
 		{
 			parse_expression(&sh_data, new_entry);
 		}
-		ft_putstr_fd(PROMPT, 1);
+		ft_putstr_fd(PROMPT, 2);
 	}
 	return (0);
 }
