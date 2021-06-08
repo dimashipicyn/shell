@@ -5,10 +5,6 @@
 #include "minishell.h"
 
 #define PROMPT "\033[32mminishell:> \033[0m"
-#define RIGHT_KEY "\E[C"
-#define LEFT_KEY "\E[D"
-#define UP_KEY "\E[A"
-#define DOWN_KEY "\E[B"
 
 static void	print_newlines(int len)
 {
@@ -50,8 +46,8 @@ static void	sh_init(t_sh_data *sh_data, const char **envp)
 	envp_copy(envp_clone, envp);
 	*sh_data = (t_sh_data){.history = history, .envp = envp_clone};
 	sh_data->exec_params = (t_exec_params){.red_in = -1, .red_out = -1};
-	set_input_mode();
 }
+#include <signal.h>
 
 int	main(int argc, const char *argv[], const char **envp)
 {
@@ -66,7 +62,11 @@ int	main(int argc, const char *argv[], const char **envp)
 		if (!new_entry)
 			ft_eprintf("");
 		history_push_front(sh_data.history, new_entry);
+		set_input_mode();
 		readline(sh_data.history);
+		reset_input_mode();
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
 		print_newlines(new_entry->size);
 		if (is_correct_syntax(new_entry))
 		{

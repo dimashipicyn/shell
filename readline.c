@@ -3,6 +3,7 @@
 #include "history.h"
 #include "linenavigation.h"
 
+#define PROMPT "\033[32mminishell:> \033[0m"
 static void	add_char(t_vector *buf, char *s, int *position)
 {
 	while (*s && ft_isprint(*s))
@@ -35,6 +36,16 @@ void	close_minishell(char *s, t_history *history, BOOLEAN emptybuf)
 	}
 }
 
+void	check_ctrl_c(char *s, t_vector *buf)
+{
+	if (*s == 3)
+	{
+		buf->method->clear(buf);
+		ft_putendl_fd("", 2);
+		ft_putstr_fd(PROMPT, 2);
+	}
+}
+
 void	readline(t_history *history)
 {
 	int			cursor;
@@ -54,6 +65,7 @@ void	readline(t_history *history)
 		read(0, s, 1000);
 		move_left(cursor);
 		close_minishell(s, history, !buf->size);
+		check_ctrl_c(s, buf);
 		navigation(buf, history, s, &cursor);
 		delete_char(buf, *s, &cursor);
 		add_char(buf, s, &cursor);

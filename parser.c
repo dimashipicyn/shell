@@ -135,7 +135,8 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 		parse_arguments(sh_data, expression);
 		err_not = parse_redirects(sh_data, expression);
 		parse_pipe(sh_data, expression);
-		print_params(sh_data);
+//		print_params(sh_data);
+//		ft_printf("err %d\n", err_not);
 		if (!err_not)
 		{
 			release_resources(sh_data);

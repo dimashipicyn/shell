@@ -58,6 +58,7 @@ BOOLEAN	parse_redirects(t_sh_data *sh_data, t_vector *expression)
 	t_vector	*tokens;
 	BOOLEAN		is_open;
 
+	is_open = TRUE;
 	tokens = new_vector(PTR);
 	if (!tokens)
 		ft_eprintf("malloc parse_redirects");
