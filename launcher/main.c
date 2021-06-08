@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/28 14:47:04 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/08 20:41:32 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 int		ft_echo(char **args);
 int		ft_pwd(void);
 int		ft_cd(char **args, char **root_path);
-int		mediator(t_main *arg, t_vector *envp)
+int		locate_env(char *var, t_vector *envp);
 
 char	**matrix_dup(char	**src)
 {
@@ -39,15 +39,21 @@ char	**matrix_dup(char	**src)
 
 int		main(int argc, char **argv, char **envp)
 {
-	t_main	arg;
-	char	**des;
-	pid_t	pid_one;
-	pid_t	pid_two;
-	int		stat;
-	char**	envp_copy;
+	t_vector	*envp_copy;
 	char	*str;
 
-	envp_copy = matrix_dup(envp);
+	envp_copy = new_vector(sizeof(char*));
+
+	str = ft_strdup("FIRST");
+	envp_copy->method->push_back(envp_copy, &str);
+	str = ft_strdup("hi=SECOND");
+	envp_copy->method->push_back(envp_copy, &str);
+	str = "THIRD";
+	envp_copy->method->push_back(envp_copy, &str);
+
+	ft_export(argv, envp_copy);
+
+	/*
 	str = getcwd(NULL, 0);
 	printf("%s\n", str);
 	free(str);
@@ -56,7 +62,6 @@ int		main(int argc, char **argv, char **envp)
 	str = getcwd(NULL, 0);
 	printf("%s\n", str);
 	free(str);
-/*
 	ft_pwd();
 	ft_echo(argv + 1);
 	while (*envp_copy)
