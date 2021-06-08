@@ -33,7 +33,7 @@ void	set_input_mode(void)
 //необходима для tputs
 static int	ft_putint(int c)
 {
-	return (write(STDOUT_FILENO, &c, 1));
+	return (write(2, &c, 1));
 }
 
 void	command(char *s, int x, int y)

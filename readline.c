@@ -58,7 +58,7 @@ void	readline(t_history *history)
 		delete_char(buf, *s, &cursor);
 		add_char(buf, s, &cursor);
 		command("cd", 0, 0);
-		ft_putstr_fd(buf->mem, 1);
+		ft_putstr_fd(buf->mem, 2);
 		move_left(buf->size - cursor);
 	}
 	entry->method->load(entry, buf->mem, buf->size);
