@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/01 17:02:47 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/01 17:51:13 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 int			check_exist(char **path, char *file)
 {
 	int				i;
-	//size_t			l_f;
 	DIR				*papka;
 	struct dirent	*example;
 
@@ -29,8 +28,6 @@ int			check_exist(char **path, char *file)
 		{
 			while ((example = readdir(papka)))
 			{
-				//l_f = (size_t)ft_strlen(example->d_name);
-				//if (ft_strncmp(example->d_name, file, l_f) == 0)
 				if (ft_strcmp(example->d_name, file) == 0)
 				{
 					closedir(papka);
@@ -53,6 +50,7 @@ char		*path_join(char *path_str, char *name)
 	if (!tmp)
 		return (0);
 	path_name = ft_strjoin(tmp, name);
+	free(tmp);
 	if (!path_name)
 		return (0);
 	return (path_name);
@@ -104,10 +102,11 @@ char	*filename_parser(char *filename, char **envp)
 	i = check_exist(path_str, filename);
 	if (i < 0)
 	{
-		free(path_str);
+		ft_free_array_ptr(path_str);
 		return (NULL);
 	}
 	str = path_join(path_str[i], filename);
+	ft_free_array_ptr(path_str);
 	return (str);
 }
 
@@ -173,8 +172,7 @@ int	do_pipe(t_main *arg)
 
 int	do_redir_out(t_main *arg)
 {
-	//if (arg->pipe_in == 0)
-		arg->save_fd_write = dup(1);
+	arg->save_fd_write = dup(1);
 	ft_printf("FD red_out = %d\n", arg->red_out);
 	fd_replacement(arg->red_out, 1);
 	return (0);
@@ -182,11 +180,6 @@ int	do_redir_out(t_main *arg)
 
 int	do_redir_in(t_main *arg)
 {
-	//if (arg->pipe_in != 0)
-	//{
-		//arg->pipe_in = 0;
-	//}
-	//else
 	if (arg->pipe_in == 0)
 		arg->save_fd_read = dup(0);
 	fd_replacement(arg->red_in, 0);
@@ -213,18 +206,19 @@ int			launcher(t_main *arg, t_vector *envp)
 	ret = 0;
 	errno = 0;
 	str = filename_parser(*(arg->argv), envp->mem);
+	//errno = 0;
+	do_pipe(arg);
+	//errno = 0;
+	do_redir(arg);
 	if (str)
 	{
-		errno = 0;
-		do_pipe(arg);
-		errno = 0;
-		do_redir(arg);
-		errno = 0;
+		//errno = 0;
 		ret = fork_execve(arg->argv, envp->mem, str);
+		free(str);
 	}
-	else
+	else if (*arg->argv)
 		ft_wprintf("%s", *(arg->argv));
-	errno = 0;
+	//errno = 0;
 	if (arg->pipe_in || arg->red_in > 0)
 	{
 		fd_replacement(arg->save_fd_read, 0);
