@@ -1,33 +1,27 @@
-#include "libft.h"
 #include "minishell.h"
-#include "parser.h"
-
-#define SINGLEQUOTE '\''
-#define DOUBLEQUOTE '"'
-#define BACKSLASH '\\'
-#define DOLOR '$'
 
 void	split_multitoken(t_vector *token, t_vector *tokens)
 {
-	t_vector	*split;
-	t_vector	*temp;
+	char		**split;
+	int			it;
+	int			last_elem;
 
-	temp = 0;
-	split = token->method->split(token, " ");
+	split = ft_split(token->mem, ' ');
 	if (!split)
 		ft_eprintf("");
-	if (has_next(split))
-		temp = *(t_vector **)next(split);
-	while (has_next(split))
+	last_elem = ft_ptrlen((const void **)split) - 1;
+	it = 0;
+	while (it < last_elem)
 	{
-		tokens->method->push_back(tokens, &(temp->mem));
-		free(temp);
-		temp = *(t_vector **)next(split);
+		tokens->method->push_back(tokens, split + it);
+		it++;
 	}
-	if (split->size > 1)
-		token->method->load(token, temp->mem, temp->size);
-	delete(temp);
-	delete(split);
+	if (last_elem >= 0)
+	{
+		token->method->load(token, split[last_elem], ft_strlen(split[last_elem]));
+		free(split[last_elem]);
+	}
+	free(split);
 }
 
 t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh_data)
@@ -43,12 +37,10 @@ t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh_data)
 	skip_delimiters(expression, " ");
 	while (has_next(expression))
 	{
-		sym = *(char *)next(expression);
+		sym = *(char *)get_next(expression);
 		if (ft_strchr(" ><|;", sym) && prev_sym != BACKSLASH)
-		{
-			previous(expression);
 			break ;
-		}
+		next(expression);
 		if ((sym == SINGLEQUOTE || sym == DOUBLEQUOTE) && prev_sym != BACKSLASH)
 			parse_quotes(expression, token, sh_data, sym);
 		else if (sym == DOLOR && prev_sym != BACKSLASH)
@@ -109,10 +101,12 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 	err_not = TRUE;
 	while (has_next(expression))
 	{
+		errno = 0;
 		parse_arguments(sh_data, expression);
 		err_not = parse_redirects(sh_data, expression);
 		parse_pipe(sh_data, expression);
-		print_params(sh_data);
+//		print_params(sh_data);
+//		ft_printf("err %d\n", err_not);
 		if (!err_not)
 		{
 			release_resources(sh_data);

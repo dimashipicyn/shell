@@ -24,7 +24,7 @@ void	set_input_mode(void)
 
 	tcgetattr(STDIN_FILENO, &g_save_attr);
 	tcgetattr (STDIN_FILENO, &attr);
-	attr.c_lflag &= ~(ICANON | ECHO);
+	attr.c_lflag &= ~(ICANON | ECHO | ISIG);
 	tcsetattr (STDIN_FILENO, TCSAFLUSH, &attr);
 }
 /* Clear ICANON and ECHO. */
@@ -33,7 +33,7 @@ void	set_input_mode(void)
 //необходима для tputs
 static int	ft_putint(int c)
 {
-	return (write(STDOUT_FILENO, &c, 1));
+	return (write(2, &c, 1));
 }
 
 void	command(char *s, int x, int y)

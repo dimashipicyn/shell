@@ -12,7 +12,7 @@ static t_vector	*get_env_var(t_vector *expression)
 	while (has_next(expression))
 	{
 		ch = *(char *)next(expression);
-		if (ft_isalnum(ch))
+		if (ft_isalnum(ch) || ch == '?')
 			str->method->push_back(str, &ch);
 		else
 		{
@@ -21,6 +21,17 @@ static t_vector	*get_env_var(t_vector *expression)
 		}
 	}
 	return (str);
+}
+
+static void	parse_exit_status(t_sh_data *sh_data, t_vector *token)
+{
+	char	*status;
+
+	status = ft_itoa((unsigned char)sh_data->exec_params.status);
+	if (!status)
+		ft_eprintf("ft_itoa");
+	token->method->add_mem(token, status, ft_strlen(status));
+	free(status);
 }
 
 void	parse_env_variable(t_vector *expression,
@@ -32,12 +43,9 @@ void	parse_env_variable(t_vector *expression,
 
 	parse_env = get_env_var(expression);
 	if (!parse_env->size)
-	{
 		token->method->push_back(token, "$");
-		delete(parse_env);
-		return ;
-	}
-	while (has_next(sh_data->envp))
+	sh_data->envp->pos = 0;
+	while (parse_env->size && has_next(sh_data->envp))
 	{
 		next_env = *(char **)next(sh_data->envp);
 		s = ft_strchr(next_env, '=');
@@ -50,6 +58,7 @@ void	parse_env_variable(t_vector *expression,
 			break ;
 		}
 	}
-	sh_data->envp->pos = 0;
+	if (!ft_strcmp(parse_env->mem, "?"))
+		parse_exit_status(sh_data, token);
 	delete(parse_env);
 }
