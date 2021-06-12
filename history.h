@@ -16,5 +16,6 @@ void		history_push_front(t_history *history, t_vector *v);
 void		history_push_back(t_history *history, t_vector *v);
 void		history_load_in_file(t_history *history, char *filename);
 void		history_save_to_file(t_history *history, char *filename);
+void		history_add(t_history *history, t_vector *entry);
 
 #endif

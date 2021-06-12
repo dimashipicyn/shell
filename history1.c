@@ -60,3 +60,10 @@ void	history_save_to_file(t_history *history, char *filename)
 			write(fd, "\n", 1);
 	}
 }
+
+void	history_add(t_history *history, t_vector *entry)
+{
+	ft_list_push_front(&(history->list->next), entry);
+	history->size += 1;
+	history->head = 0;
+}

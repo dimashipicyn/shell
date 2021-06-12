@@ -1,35 +1,5 @@
-#include "libft.h"
 #include "minishell.h"
-#include "parser.h"
 
-#define SINGLEQUOTE '\''
-#define DOUBLEQUOTE '"'
-#define BACKSLASH '\\'
-#define DOLOR '$'
-/*
-void	split_multitoken(t_vector *token, t_vector *tokens)
-{
-	t_vector	*split;
-	t_vector	*temp;
-
-	temp = 0;
-	split = token->method->split(token, " ");
-	if (!split)
-		ft_eprintf("");
-	if (has_next(split))
-		temp = *(t_vector **)next(split);
-	while (has_next(split))
-	{
-		tokens->method->push_back(tokens, &(temp->mem));
-		free(temp);
-		temp = *(t_vector **)next(split);
-	}
-	if (split->size > 1)
-		token->method->load(token, temp->mem, temp->size);
-	delete(temp);
-	delete(split);
-}
-*/
 void	split_multitoken(t_vector *token, t_vector *tokens)
 {
 	char		**split;

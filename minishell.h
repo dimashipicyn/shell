@@ -1,6 +1,13 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
+# include <signal.h>
+# include "libft.h"
 # include "history.h"
+# include "parser.h"
+# include "term.h"
+# include "readline.h"
+
+#define PROMPT "\033[32mminishell:> \033[0m"
 
 typedef struct s_exec_params
 {

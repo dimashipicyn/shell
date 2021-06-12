@@ -46,15 +46,13 @@ void	check_ctrl_c(char *s, t_vector *buf)
 	}
 }
 
-void	readline(t_history *history)
+t_vector	*readline(t_history *history)
 {
 	int			cursor;
 	char		s[1000];
-	t_vector	*entry;
 	t_vector	*buf;
 
 	cursor = 0;
-	entry = history_get_entry(history);
 	buf = new_vector(CHAR);
 	if (!buf)
 		ft_eprintf("malloc readline");
@@ -73,6 +71,5 @@ void	readline(t_history *history)
 		ft_putstr_fd(buf->mem, 2);
 		move_left(buf->size - cursor);
 	}
-	entry->method->load(entry, buf->mem, buf->size);
-	delete(buf);
+	return (buf);
 }
