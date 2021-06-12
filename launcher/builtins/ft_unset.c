@@ -1,41 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_cd.c                                            :+:      :+:    :+:   */
+/*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/18 16:50:25 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/12 20:22:35 by tphung           ###   ########.fr       */
+/*   Created: 2021/06/12 18:48:03 by tphung            #+#    #+#             */
+/*   Updated: 2021/06/12 19:38:37 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/inc.h"
 #include "../includes/utils.h"
 
-int	ft_cd(char **args, t_vector *envp)
+int	ft_unset(char **argv, t_vector *envp)
 {
+	int	i;
+	int	equal;
 	int	pos;
-	char	*dir;
-	char	*old_dir;
 
-	pos = locate_env("HOME", envp);
-	if (!args || !args[1])
+	i = 1;
+	pos = -1;
+	while (argv[i])
 	{
-		if (pos < 0)
+		pos = locate_env(argv[i], envp);
+		if (pos >= 0)
 		{
-			ft_fprintf(2, "minishell: cd: HOME not set\n");
-			return (0);
+			free(*(char**)envp->method->at(envp, pos));
+			envp->method->erase(envp, pos);
 		}
-		dir = *(char**)envp->method->at(envp, pos);
-		dir = ft_substr(dir,\
-			1 + ft_strchr(dir, '=') - dir, ft_strlen(dir));
+		i++;
 	}
-	else
-		dir = ft_strdup(args[1]);
-	chdir(dir);
-	free(dir);
-	if (errno > 0)
-		ft_wprintf("cd");
 	return (0);
 }

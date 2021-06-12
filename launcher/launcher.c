@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/12 17:28:37 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/12 19:38:21 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,33 +198,22 @@ pid_t	fork_builtins(char **argv, t_vector *envp, int flag)
 	int		stat;
 	pid_t	pid;
 
-	//pid = fork();
 	pid = 0;
 	stat = 123;
-	//if (pid == -1)
-	//	return (-1);
-	//else if (pid == 0)
-	//{
-		//errno = 0;
-		//signal(SIGINT, SIG_DFL);
-		//signal(SIGQUIT, SIG_DFL);
-		if (flag == 1)
-			stat = ft_echo(argv + 1);
-		else if (flag == 4)
-			stat = ft_export(argv, envp);
-		else if (flag == 2)
-			stat = ft_cd(argv, argv[1]);
-		else if (flag == 3)
-			stat = ft_pwd();
-		else if (flag == 6)
-			stat = ft_env(envp);
-		else if (flag == 7)
-			exit(0);
-		//stat = execve(path_name, argv, envp);
-		//ft_errors(0);
-	//	exit(stat);
-	//}
-	//ft_printf("exec pid %d\n", pid);
+	if (flag == 1)
+		stat = ft_echo(argv + 1);
+	else if (flag == 4)
+		stat = ft_export(argv, envp);
+	else if (flag == 2)
+		stat = ft_cd(argv, envp);
+	else if (flag == 3)
+		stat = ft_pwd();
+	else if (flag == 6)
+		stat = ft_env(envp);
+	else if (flag == 7)
+		exit(0);
+	else if (flag == 5)
+		stat = ft_unset(argv, envp);
 	return (pid);
 }
 
