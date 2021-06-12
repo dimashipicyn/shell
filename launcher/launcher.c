@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/08 19:57:09 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/12 17:28:37 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,13 +73,7 @@ pid_t	fork_execve(char **argv, char **envp, char *path_name)
 		stat = execve(path_name, argv, envp);
 		//ft_errors(0);
 		exit(stat);
-	} /*
-	else
-	{
-		waitpid(pid, &stat, 0);
-		return (0);
 	}
-	*/
 	ft_printf("exec pid %d\n", pid);
 	return (pid);
 }
@@ -96,7 +90,7 @@ char	*filename_parser(char *filename, char **envp)
 	if (!filename)
 		return(NULL);
 	if (ft_strchr("./", filename[0]))
-		return (filename);
+		return (ft_strdup(filename));
 	while(ft_strncmp(envp[i++], "PATH=", 5))
 		;
 	str = envp[--i];
@@ -104,11 +98,11 @@ char	*filename_parser(char *filename, char **envp)
 	i = check_exist(path_str, filename);
 	if (i < 0)
 	{
-		ft_free_array_ptr(path_str);
+		ft_free_array_ptr((void**)path_str);
 		return (NULL);
 	}
 	str = path_join(path_str[i], filename);
-	ft_free_array_ptr(path_str);
+	ft_free_array_ptr((void**)path_str);
 	return (str);
 }
 
@@ -199,15 +193,72 @@ int	do_redir(t_main *arg)
 	return (1);
 }
 
+pid_t	fork_builtins(char **argv, t_vector *envp, int flag)
+{
+	int		stat;
+	pid_t	pid;
+
+	//pid = fork();
+	pid = 0;
+	stat = 123;
+	//if (pid == -1)
+	//	return (-1);
+	//else if (pid == 0)
+	//{
+		//errno = 0;
+		//signal(SIGINT, SIG_DFL);
+		//signal(SIGQUIT, SIG_DFL);
+		if (flag == 1)
+			stat = ft_echo(argv + 1);
+		else if (flag == 4)
+			stat = ft_export(argv, envp);
+		else if (flag == 2)
+			stat = ft_cd(argv, argv[1]);
+		else if (flag == 3)
+			stat = ft_pwd();
+		else if (flag == 6)
+			stat = ft_env(envp);
+		else if (flag == 7)
+			exit(0);
+		//stat = execve(path_name, argv, envp);
+		//ft_errors(0);
+	//	exit(stat);
+	//}
+	//ft_printf("exec pid %d\n", pid);
+	return (pid);
+}
+
+int	builtins(char *name)
+{
+	if (!ft_strcmp(name, "echo"))
+		return (1);
+	if (!ft_strcmp(name, "cd"))
+		return (2);
+	if (!ft_strcmp(name, "pwd"))
+		return (3);
+	if (!ft_strcmp(name, "export"))
+		return (4);
+	if (!ft_strcmp(name, "unset"))
+		return (5);
+	if (!ft_strcmp(name, "env"))
+		return (6);
+	if (!ft_strcmp(name, "exit"))
+		return (7);
+	return (FALSE);
+}
 
 int			launcher(t_main *arg, t_vector *envp)
 {
 	char	*str;
 	pid_t	ret;
+	int		flag;
 
-	ret = 0;
+	ret = -1;
 	errno = 0;
-	str = filename_parser(*(arg->argv), envp->mem);
+	str = NULL;
+	flag = builtins(*(arg->argv));
+	if (flag == FALSE)
+		str = filename_parser(*(arg->argv), envp->mem);
 	//errno = 0;
 	do_pipe(arg);
 	//errno = 0;
@@ -218,7 +269,11 @@ int			launcher(t_main *arg, t_vector *envp)
 		ret = fork_execve(arg->argv, envp->mem, str);
 		free(str);
 	}
-	else if (*arg->argv)
+	else if (flag)
+	{
+		ret = fork_builtins(arg->argv, envp, flag);
+	}
+	if (*arg->argv && (ret < 0))
 		ft_wprintf("%s", *(arg->argv));
 	//errno = 0;
 	if (arg->pipe_in || arg->red_in > 0)

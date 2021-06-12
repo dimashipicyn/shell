@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 17:15:36 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/08 20:44:22 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/12 15:23:18 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int ft_export(char **argv, t_vector *envp)
 
 	i = 1;
 	pos = -1;
+	printf("I AM EXPORT\n");
 	while (argv[i])
 	{
 		equal = ft_strchr(argv[i], '=') - argv[i];
@@ -50,7 +51,7 @@ int ft_export(char **argv, t_vector *envp)
 		{
 			str = ft_substr(argv[i], 0, equal + 1);
 			pos = locate_env(str, envp);
-		//	printf("POS = %d\n", pos);
+			printf("POS = %d\n", pos);
 			free(*(char**)envp->method->at(envp, pos));
 			envp->method->erase(envp, pos);
 			free(str);
@@ -60,7 +61,7 @@ int ft_export(char **argv, t_vector *envp)
 		i++;
 	}
 	envp->pos = 0;
-	//while(has_next(envp))
-	//	printf("%s\n", *(char**)next(envp));
+	while(has_next(envp))
+		printf("%s\n", *(char**)next(envp));
 	return (0);
 }

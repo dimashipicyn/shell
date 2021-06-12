@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lbespin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/03 13:59:17 by lbespin           #+#    #+#             */
-/*   Updated: 2021/05/13 16:11:23 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/01 19:43:46 by lbespin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <stdarg.h>
+# include <errno.h>
+# include <string.h>
+# include <fcntl.h>
 
 # define RED "\033[31m"
 # define GREEN "\033[32m"
@@ -48,7 +51,7 @@ char				*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char				*ft_strrev(char *str);
 size_t				ft_strnlen(const char *s, size_t n);
 int					ft_strcmp(const char *s1, const char *s2);
-int					ft_str_repeat(int repeat, char *str);
+int					ft_str_repeat(int stream, int repeat, char *str);
 char				**ft_split_reg(char *s, char *reg);
 int					ft_isalnum(int character);
 int					ft_isalpha(int character);
@@ -83,6 +86,10 @@ void				ft_bubblesort(void *array, int size,
 						int len, int (*cmp)(void *, void *));
 void				aFailed(char *file, int line, char *expr);
 void				test_check(int res, char *file, int line, char *expr);
+char				*ft_getprogname(void);
+void				ft_setprogname(char *name);
+size_t				ft_ptrlen(const void **ptr);
+void				ft_free_array_ptr(void	**array);
 
 /*
 ** lists function
@@ -94,8 +101,8 @@ typedef struct s_list
 }					t_list;
 
 int					ft_lstsize(t_list *lst);
-void				ft_lstadd_front(t_list **lst, t_list *);
-void				ft_lstadd_back(t_list **lst, t_list *);
+void				ft_lstadd_front(t_list **lst, t_list *new);
+void				ft_lstadd_back(t_list **lst, t_list *new);
 void				ft_lstdelone(t_list *lst, void (*del)(void *));
 void				ft_lstclear(t_list **lst, void (*del)(void *));
 void				ft_lstiter(t_list *lst, void (*f)(void *));
@@ -132,6 +139,9 @@ void				ft_list_sort(t_list **begin_list, int (*cmp)());
 */
 int					get_next_line(int fd, char **line);
 int					ft_printf(const char *fmt, ...);
+void				ft_eprintf(const char *fmt, ...);
+void				ft_wprintf(const char *fmt, ...);
+int					ft_fprintf(int stream, const char *fmt, ...);
 void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char *s, int fd);
 void				ft_putendl_fd(char *s, int fd);
@@ -147,9 +157,9 @@ void				ft_putnbr_fd(int n, int fd);
 # define DOUBLE 8
 # define PTR 8
 
-struct s_vector;
+struct	s_vector;
 
-typedef struct	s_methods
+typedef struct s_methods
 {
 	int		(*insert)(struct s_vector *, void *, size_t);
 	int		(*size)(struct s_vector *);
@@ -160,16 +170,18 @@ typedef struct	s_methods
 	void	*(*at)(struct s_vector *, size_t);
 	void	(*release)(struct s_vector *);
 	int		(*load)(struct s_vector *, void *, size_t);
+	int		(*add_mem)(struct s_vector *, void *, size_t);
+	void	*(*split)(struct s_vector *, char *);
 }				t_methods;
 
-typedef struct	s_vector
+typedef struct s_vector
 {
 	t_methods	*method;
-	void	*mem;
-	size_t	size;
-	size_t	max_size;
-	size_t	bytes;
-	size_t	pos;
+	void		*mem;
+	size_t		size;
+	size_t		max_size;
+	size_t		bytes;
+	size_t		pos;
 }				t_vector;
 
 // Constructor and destructor
@@ -180,6 +192,13 @@ void				delete(void *obj);
 ** vector iterator
 */
 void				*next(t_vector *vector);
+void				*previous(t_vector *vector);
+void				*get_next(t_vector *vector);
 int					has_next(t_vector *vector);
+
+/*
+** additional vector function
+*/
+void				skip_delimiters(t_vector *vector, char *delim);
 
 #endif
