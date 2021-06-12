@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/12 15:36:43 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/12 17:28:37 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ char	*filename_parser(char *filename, char **envp)
 	if (!filename)
 		return(NULL);
 	if (ft_strchr("./", filename[0]))
-		return (filename);
+		return (ft_strdup(filename));
 	while(ft_strncmp(envp[i++], "PATH=", 5))
 		;
 	str = envp[--i];
@@ -98,11 +98,11 @@ char	*filename_parser(char *filename, char **envp)
 	i = check_exist(path_str, filename);
 	if (i < 0)
 	{
-		ft_free_array_ptr(path_str);
+		ft_free_array_ptr((void**)path_str);
 		return (NULL);
 	}
 	str = path_join(path_str[i], filename);
-	ft_free_array_ptr(path_str);
+	ft_free_array_ptr((void**)path_str);
 	return (str);
 }
 
