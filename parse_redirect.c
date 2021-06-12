@@ -18,7 +18,7 @@ BOOLEAN	open_file(t_sh_data *sh_data, char *op, char *filename)
 
 	is_open = TRUE;
 	if (!ft_strcmp(op, ">>"))
-		is_open = reopen_file(filename, O_APPEND | O_CREAT, 0644, &(sh_data->exec_params.red_out));
+		is_open = reopen_file(filename, O_APPEND | O_WRONLY | O_CREAT, 0644, &(sh_data->exec_params.red_out));
 	else if (!ft_strcmp(op, ">"))
 		is_open = reopen_file(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644, &(sh_data->exec_params.red_out));
 	else if (!ft_strcmp(op, "<"))
