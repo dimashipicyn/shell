@@ -36,13 +36,14 @@ void	close_minishell(char *s, t_history *history, BOOLEAN emptybuf)
 	}
 }
 
-void	check_ctrl_c(char *s, t_vector *buf)
+void	check_ctrl_c(char *s, t_vector *buf, int *cursor)
 {
 	if (*s == 3)
 	{
 		buf->method->clear(buf);
 		ft_putendl_fd("", 2);
 		ft_putstr_fd(PROMPT, 2);
+		*cursor = 0;
 	}
 }
 
@@ -63,7 +64,7 @@ t_vector	*readline(t_history *history)
 		read(0, s, 1000);
 		move_left(cursor);
 		close_minishell(s, history, !buf->size);
-		check_ctrl_c(s, buf);
+		check_ctrl_c(s, buf, &cursor);
 		navigation(buf, history, s, &cursor);
 		delete_char(buf, *s, &cursor);
 		add_char(buf, s, &cursor);

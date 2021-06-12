@@ -81,6 +81,7 @@ void	print_params(t_sh_data *sh_data)
 	ft_printf("pipe_in %d\n", ex.pipe_in);
 	ft_printf("red_in %d\n", ex.red_in);
 	ft_printf("red_out %d\n", ex.red_out);
+	ft_printf("argv %x\n", ex.argv);
 }
 
 void	release_resources(t_sh_data *sh_data)
@@ -107,7 +108,7 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 		parse_pipe(sh_data, expression);
 //		print_params(sh_data);
 //		ft_printf("err %d\n", err_not);
-		if (!err_not)
+		if (!err_not || !sh_data->exec_params.argv[0])
 		{
 			release_resources(sh_data);
 			break ;

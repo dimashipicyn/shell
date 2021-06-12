@@ -44,6 +44,13 @@ static void	sh_init(t_sh_data *sh_data, const char **envp)
 	*sh_data = (t_sh_data){.history = history, .envp = envp_clone};
 	sh_data->exec_params = (t_exec_params){.red_in = -1, .red_out = -1};
 }
+int g_signal;
+
+void	quit_handler(int sig)
+{
+	g_signal = sig;
+	ft_putendl_fd("Quit 3", 2);
+}
 
 int	main(int argc, const char *argv[], const char **envp)
 {
@@ -53,7 +60,7 @@ int	main(int argc, const char *argv[], const char **envp)
 	sh_init(&sh_data, envp);
 	ft_putstr_fd(PROMPT, 2);
 	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	signal(SIGQUIT, quit_handler);
 	while (1)
 	{
 		set_input_mode();
@@ -68,6 +75,8 @@ int	main(int argc, const char *argv[], const char **envp)
 		}
 		else
 			delete(entry);
+		//ft_fprintf(2, "sig %d\n", g_signal);
+		//sh_data.exec_params.status = 128 + g_signal;
 		ft_putstr_fd(PROMPT, 2);
 	}
 	return (0);
