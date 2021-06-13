@@ -66,7 +66,6 @@ int	export_in_vector(t_vector *envp, char *str, int pos)
 
 int	print_export(t_vector *envp)
 {
-	char	*var_name;
 	char	*var_env;
 	char	*equal;
 
@@ -80,10 +79,11 @@ int	print_export(t_vector *envp)
 			ft_printf("%s", var_env);
 		else
 		{
-			write(1, var_env, equal - var_env + 1);
+/*			write(1, var_env, equal - var_env + 1);
 			write(1, "\"", 1);
 			write(1, equal + 1, ft_strlen(equal));
-			write(1, "\"", 1);
+			write(1, "\"", 1);*/
+			ft_printf("%.*s\"%s\"", equal - var_env + 1, var_env, equal + 1);
 		}
 		write(1, "\n", 1);
 	}
