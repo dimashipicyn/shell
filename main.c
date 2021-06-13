@@ -1,4 +1,7 @@
 #include "minishell.h"
+#include "history.h"
+#include "termc.h"
+#include "readline.h"
 
 static void	print_newlines(int len)
 {

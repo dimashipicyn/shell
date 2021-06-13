@@ -1,6 +1,6 @@
 #include "libft.h"
 #include "history.h"
-#include "term.h"
+#include "termc.h"
 
 #define RIGHT_KEY "\E[C"
 #define LEFT_KEY "\E[D"

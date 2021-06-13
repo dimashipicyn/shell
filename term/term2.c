@@ -1,4 +1,6 @@
-#include "term.h"
+#include "minishell.h"
+#include <term.h>
+#include <sys/ioctl.h>
 
 int	get_term_size(void)
 {

@@ -1,9 +1,10 @@
-#include "libft.h"
-#include "term.h"
+#include "minishell.h"
 #include "history.h"
+#include "termc.h"
 #include "linenavigation.h"
 
 #define PROMPT "\033[32mminishell:> \033[0m"
+
 static void	add_char(t_vector *buf, char *s, int *position)
 {
 	while (*s && ft_isprint(*s))

@@ -1,14 +1,13 @@
 CC = gcc
 FLAGS = -Wall -Wextra -MMD# -g -fsanitize=address# -Werror
-VPATH := launcher:launcher/builtins:Dlib 
+VPATH := launcher:history:builtins:parser:readline:term:include:Dlib
 SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c\
 	   parser.c parse_env_var.c parse_quotes.c syntax_validator.c\
 	   parse_argument.c parse_redirect.c
-
 SRCS += mediator.c launcher.c ft_errors.c ft_echo.c ft_pwd.c ft_cd.c ft_export.c\
 		ft_env.c
 
-INC = minishell.h parser.h history.h readline.h linenavigation.h term.h
+INC = minishell.h parser.h history.h readline.h linenavigation.h termc.h
 
 OBJ = $(SRCS:.c=.o)
 DEPENDS = ${SRCS:.c=.d}
@@ -20,20 +19,20 @@ LFT = libft.a
 all: lib $(SRCS) $(NAME)
 
 $(NAME): $(OBJ)
-		gcc $(FLAGS) $(OBJ) $(LFT) -o $(NAME) -ltermcap -IDlib
+		gcc $(FLAGS) $(OBJ) $(LFT) -o $(NAME) -ltermcap
 
 lib:
 		make -C Dlib
 		cp Dlib/$(LFT) .
 
 .c.o: $(SRCS)
-		$(CC) $(FLAGS) -c $< -IDlib
+		$(CC) $(FLAGS) -c $< -I./include -I./Dlib
 
 clean:
-		@rm -rf $(OBJ)
+		@rm -rf $(OBJ) $(DEPENDS)
 
 fclean: clean
-		@rm -rf $(NAME) $(LFT) $(LMLX)
+		@rm -rf $(NAME) $(LFT)
 
 re: fclean all
 

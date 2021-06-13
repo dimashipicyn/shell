@@ -1,9 +1,6 @@
+#include "minishell.h"
 #include <termios.h>
-#include <unistd.h>
-#include <curses.h>
 #include <term.h>
-#include <stdlib.h>
-#include "libft.h"
 
 static char				g_room_termtype[2048];
 static char				*g_termtype;
