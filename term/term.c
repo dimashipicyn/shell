@@ -41,11 +41,12 @@ void	command(char *s, int x, int y)
 	ft_bzero(g_buffer, 100);
 }
 
-void	init_term(void)
+BOOLEAN	init_term(void)
 {
 	if (!isatty(STDIN_FILENO))
-		exit(1);
+		return (FALSE);
 	g_termtype = getenv("TERM");
 	if (g_termtype == NULL || tgetent(g_room_termtype, g_termtype) != 1)
-		exit(1);
+		return (FALSE);
+	return (TRUE);
 }

@@ -33,9 +33,10 @@ static void	sh_init(t_sh_data *sh_data, const char **envp)
 	t_history	*history;
 	t_vector	*entry;
 	t_vector	*envp_clone;
+	BOOLEAN		is_term;
 
+	is_term = init_term();
 	ft_setprogname("minishell");
-	init_term();
 	history = new_history();
 	envp_clone = new_vector(PTR);
 	entry = new_vector(CHAR);
@@ -46,6 +47,24 @@ static void	sh_init(t_sh_data *sh_data, const char **envp)
 	envp_copy(envp_clone, envp);
 	*sh_data = (t_sh_data){.history = history, .envp = envp_clone};
 	sh_data->exec_params = (t_exec_params){.red_in = -1, .red_out = -1};
+	if (!is_term)
+	{
+		t_vector *entry = new_vector(CHAR);
+		char buf[1001];
+		ft_bzero(buf, 1001);
+		read(0, buf, 1000);
+		int size = ft_strlen(buf);
+		if (size > 0)
+			size -= 1;
+		entry->method->load(entry, buf, size);
+		if (entry->size > 0)
+		{
+			if (is_correct_syntax(entry))
+				parse_expression(sh_data, entry);
+		}
+		delete(entry);
+		exit(0);
+	}
 }
 int g_signal;
 
