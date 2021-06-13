@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/18 16:50:25 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/13 15:52:02 by lbespin          ###   ########.fr       */
+/*   Updated: 2021/06/13 16:29:33 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,7 @@ int	var_export(t_vector *envp, int dest_pos, char *var, char *dest_var_name)
 {
 	char		*dest;
 
-	printf("VAR = %s\n", var);
 	dest = ft_strjoin(dest_var_name, var);
-	printf("NEW = %s\n", dest);
 	free(*(char **)envp->method->at(envp, dest_pos));
 	envp->method->erase(envp, dest_pos);
 	envp->method->insert(envp, &dest, dest_pos);
@@ -67,7 +65,6 @@ int	ft_cd(char **args, t_vector *envp)
 	char	*dir;
 	char	*pwd;
 
-	pwd = getcwd(NULL, 0);
 	if (!args || !args[1])
 	{
 		pos = locate_env("HOME", envp);
@@ -80,6 +77,7 @@ int	ft_cd(char **args, t_vector *envp)
 	}
 	else
 		dir = ft_strdup(args[1]);
+	pwd = getcwd(NULL, 0);
 	chdir(dir);
 	if (errno > 0)
 		ft_wprintf("cd");

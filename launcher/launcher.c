@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/13 15:57:13 by lbespin          ###   ########.fr       */
+/*   Updated: 2021/06/13 19:14:26 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ pid_t	fork_execve(char **argv, char **envp, char *path_name)
 		//ft_errors(0);
 		exit(stat);
 	}
-	ft_printf("exec pid %d\n", pid);
 	return (pid);
 }
 
@@ -169,7 +168,6 @@ int	do_pipe(t_main *arg)
 int	do_redir_out(t_main *arg)
 {
 	arg->save_fd_write = dup(1);
-	ft_printf("FD red_out = %d\n", arg->red_out);
 	fd_replacement(arg->red_out, 1);
 	return (0);
 }

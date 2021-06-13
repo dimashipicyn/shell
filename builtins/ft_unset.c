@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 18:48:03 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/13 15:52:35 by lbespin          ###   ########.fr       */
+/*   Updated: 2021/06/13 17:03:42 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 int	ft_unset(char **argv, t_vector *envp)
 {
 	int	i;
-	int	equal;
 	int	pos;
 
 	i = 1;
