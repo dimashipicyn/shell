@@ -46,7 +46,7 @@ static BOOLEAN	check_operators(t_vector *expression, char sym)
 	}
 	if (has_next(expression))
 		previous(expression);
-	if ((has_next(expression) && (op->size == 1 || !ft_strcmp(op->mem, ">>"))) || !ft_strcmp(op->mem, ";"))
+	if ((has_next(expression) && (op->size == 1 || !ft_strcmp(op->mem, ">>") || !ft_strcmp(op->mem, "<<"))) || !ft_strcmp(op->mem, ";"))
 		is_correct = TRUE;
 	else
 		is_correct = FALSE;

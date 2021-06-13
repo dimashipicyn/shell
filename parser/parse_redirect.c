@@ -51,6 +51,36 @@ t_vector	*get_operator(t_vector *expression)
 	return (token);
 }
 
+#include "termc.h"
+#include "readline.h"
+
+BOOLEAN	parse_input_to_delimiter(t_sh_data *sh_data, char *op, char *delim)
+{
+	t_vector	*entry;
+	int			fd[2];
+
+	if (ft_strcmp(op, "<<"))
+		return (TRUE);
+	pipe(fd);
+	while (TRUE)
+	{
+		ft_putstr_fd("> ", 2);
+		set_input_mode();
+		entry = readline(sh_data->history);
+		reset_input_mode();
+		ft_putendl_fd("", 2);
+		if (!ft_strcmp(delim, entry->mem))
+			break ;
+		write(fd[1], entry->mem, entry->size);
+		write(fd[1], "\n", 1);
+		delete(entry);
+	}
+	delete(entry);
+	close(fd[1]);
+	sh_data->exec_params.red_in = fd[0];
+	return (TRUE);
+}
+
 BOOLEAN	parse_redirects(t_sh_data *sh_data, t_vector *expression)
 {
 	t_vector	*operator;
@@ -73,7 +103,8 @@ BOOLEAN	parse_redirects(t_sh_data *sh_data, t_vector *expression)
 		operand = get_token(expression, tokens, sh_data);
 		if (tokens->size != 0)
 			ft_wprintf("ambiguous redirect");
-		is_open = open_file(sh_data, operator->mem, operand->mem);
+		//is_open = open_file(sh_data, operator->mem, operand->mem);
+		is_open = parse_input_to_delimiter(sh_data, operator->mem, operand->mem);
 		delete(operator);
 		delete(operand);
 	}
