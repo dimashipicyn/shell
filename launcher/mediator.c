@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/13 15:56:58 by lbespin          ###   ########.fr       */
+/*   Updated: 2021/06/13 19:14:26 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ int		mediator(t_main *arg, t_vector *envp)
 			pid = *(pid_t*)next(arg->pids);
 			waitpid(pid, &(arg->status), 0);
 			arg->status = WEXITSTATUS(arg->status);
-			ft_printf("mediator pid %d\n", pid);
 		}
 		arg->pids->method->clear(arg->pids);
 	}
