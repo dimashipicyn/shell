@@ -55,12 +55,28 @@ void	quit_handler(int sig)
 	ft_putendl_fd("Quit 3", 2);
 }
 
+void	minishell_usage(int ac, const char **av)
+{
+	if (ac > 1)
+	{
+		if (!ft_strcmp(av[1], "--help"))
+		{
+			ft_printf("Minishell Zip-zipulya. Version 1.0\n");
+			ft_printf("Usage:\t minishell [option]\n");
+			ft_printf("Options:\n");
+			ft_printf("\t--help\n");
+			exit(0);
+		}
+	}
+}
+
 int	main(int argc, const char *argv[], const char **envp)
 {
 	t_sh_data	sh_data;
 	t_vector	*entry;
 
 	sh_init(&sh_data, envp);
+	minishell_usage(argc, argv);
 	ft_putstr_fd(PROMPT, 2);
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, quit_handler);
