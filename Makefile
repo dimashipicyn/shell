@@ -7,7 +7,7 @@ SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c\
 SRCS += mediator.c launcher.c ft_errors.c ft_echo.c ft_pwd.c ft_cd.c ft_export.c\
 		ft_env.c ft_unset.c
 
-INC = minishell.h parser.h history.h readline.h linenavigation.h termc.h
+INC = minishell.h parser.h history.h readline.h linenavigation.h termc.h inc.h utils.h structs.h
 
 OBJ = $(SRCS:.c=.o)
 DEPENDS = ${SRCS:.c=.d}

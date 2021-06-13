@@ -1,44 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/18 13:27:03 by tphung            #+#    #+#             */
-/*   Updated: 2021/05/18 14:14:54 by tphung           ###   ########.fr       */
+/*   Created: 2021/06/12 18:48:03 by tphung            #+#    #+#             */
+/*   Updated: 2021/06/13 15:52:35 by lbespin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/inc.h"
+#include "inc.h"
+#include "utils.h"
 
-int	check_echo(char *str)
+int	ft_unset(char **argv, t_vector *envp)
 {
-	if (ft_strcmp("-n", str))
-		return (0);
-	return (1);
-}
+	int	i;
+	int	equal;
+	int	pos;
 
-int	ft_echo(char **args)
-{
-	int	flag;
-
-	if (!args || !*args)
+	i = 1;
+	pos = -1;
+	while (argv[i])
 	{
-		write(1, "\n", 1);
-		return (0);
-	}
-	flag = check_echo(*args);
-	if (flag)
-		args++;
-	while (*args)
-	{
-		write(1, *args, ft_strlen(*args));
-		args++;
-		if (*args)
-			write(1, " ", 1);
-		else if (!flag)
-			write(1, "\n", 1);
+		pos = locate_env(argv[i], envp);
+		if (pos >= 0)
+		{
+			free(*(char**)envp->method->at(envp, pos));
+			envp->method->erase(envp, pos);
+		}
+		i++;
 	}
 	return (0);
 }

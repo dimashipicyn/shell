@@ -14,7 +14,6 @@ typedef struct	s_main
 	int			status;
 	char 		**argv;
 	t_vector	*pids;
-	//char		**envp;	//vector **envp
 }	t_main;
 
 #endif

@@ -6,13 +6,13 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/12 19:38:21 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/13 15:57:13 by lbespin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./includes/inc.h"
-#include "./includes/structs.h"
-#include "./includes/utils.h"
+#include "inc.h"
+#include "structs.h"
+#include "utils.h"
 
 int			check_exist(char **path, char *file)
 {

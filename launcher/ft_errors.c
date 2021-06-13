@@ -1,4 +1,4 @@
-#include "./includes/inc.h"
+#include "inc.h"
 
 int ft_errors(int code)
 {

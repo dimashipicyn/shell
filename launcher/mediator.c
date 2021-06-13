@@ -6,12 +6,12 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/12 15:14:43 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/13 15:56:58 by lbespin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./includes/inc.h"
-#include "./includes/structs.h"
+#include "inc.h"
+#include "structs.h"
 
 int		ft_echo(char **args);
 int		ft_pwd(void);
