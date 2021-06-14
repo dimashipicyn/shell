@@ -9,7 +9,7 @@ void	split_multitoken(t_vector *token, t_vector *tokens)
 
 	split = ft_split(token->mem, ' ');
 	if (!split)
-		ft_eprintf("");
+		return ;
 	last_elem = ft_ptrlen((const void **)split) - 1;
 	it = 0;
 	while (it < last_elem)
@@ -33,7 +33,7 @@ t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh_data)
 
 	token = new_vector(CHAR);
 	if (!token)
-		ft_eprintf("malloc token");
+		ft_eprintf("get token");
 	prev_sym = 0;
 	skip_delimiters(expression, " ");
 	while (has_next(expression))
@@ -91,6 +91,8 @@ void	release_resources(t_sh_data *sh_data)
 	close(sh_data->exec_params.red_out);
 	sh_data->exec_params.red_in = -1;
 	sh_data->exec_params.red_out = -1;
+	sh_data->exec_params.pipe_out = 0;
+	sh_data->exec_params.pipe_in = 0;
 	ft_free_array_ptr((void **)sh_data->exec_params.argv);
 	sh_data->exec_params.argv = 0;
 }

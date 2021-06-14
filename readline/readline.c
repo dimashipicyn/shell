@@ -61,6 +61,7 @@ t_vector	*readline(t_history *history)
 	ft_bzero(s, 1000);
 	while (!ft_isnewline(*s))
 	{
+		move_left(buf->size - cursor);
 		ft_bzero(s, 1000);
 		read(0, s, 1000);
 		move_left(cursor);
@@ -71,7 +72,6 @@ t_vector	*readline(t_history *history)
 		add_char(buf, s, &cursor);
 		command("cd", 0, 0);
 		ft_putstr_fd(buf->mem, 2);
-		move_left(buf->size - cursor);
 	}
 	return (buf);
 }

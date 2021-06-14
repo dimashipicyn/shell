@@ -41,7 +41,7 @@ static t_vector	*get_operator(t_vector *expression)
 
 	token = new_vector(CHAR);
 	if (!token)
-		ft_eprintf("malloc token");
+		ft_eprintf("get_operator");
 	skip_delimiters(expression, " ");
 	while (has_next(expression))
 	{

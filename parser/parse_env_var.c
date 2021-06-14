@@ -8,7 +8,7 @@ static t_vector	*get_env_var(t_vector *expression)
 
 	str = new_vector(CHAR);
 	if (!str)
-		ft_eprintf("");
+		ft_eprintf("get_env_var");
 	while (has_next(expression))
 	{
 		ch = *(char *)next(expression);
@@ -29,7 +29,7 @@ static void	parse_exit_status(t_sh_data *sh_data, t_vector *token)
 
 	status = ft_itoa((unsigned char)sh_data->exec_params.status);
 	if (!status)
-		ft_eprintf("ft_itoa");
+		ft_eprintf("parse_exit_status");
 	token->method->add_mem(token, status, ft_strlen(status));
 	free(status);
 }

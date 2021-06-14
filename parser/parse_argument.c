@@ -10,7 +10,7 @@ void	parse_arguments(t_sh_data *sh_data, t_vector *expression)
 
 	args = new_vector(PTR);
 	if (!args)
-		ft_eprintf("malloc args");
+		ft_eprintf("parse arguments");
 	while (has_next(expression))
 	{
 		sym = *(char *)get_next(expression);

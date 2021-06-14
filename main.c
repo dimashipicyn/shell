@@ -10,7 +10,7 @@ static void	print_newlines(int len)
 
 	column = get_term_size();
 	newlines = (len + 11) / column;
-	while (newlines-- >= 0)
+	while (newlines-- > 0)
 		ft_putendl_fd("", 2);
 }
 
@@ -74,6 +74,12 @@ void	quit_handler(int sig)
 	ft_putendl_fd("Quit 3", 2);
 }
 
+void	int_handler(int sig)
+{
+	g_signal = sig;
+	ft_putendl_fd("", 2);
+}
+
 void	minishell_usage(int ac, const char **av)
 {
 	if (ac > 1)
@@ -97,14 +103,14 @@ int	main(int argc, const char *argv[], const char **envp)
 	sh_init(&sh_data, envp);
 	minishell_usage(argc, argv);
 	ft_putstr_fd(PROMPT, 2);
-	signal(SIGINT, SIG_IGN);
+	signal(SIGINT, int_handler);
 	signal(SIGQUIT, quit_handler);
 	while (1)
 	{
 		set_input_mode();
 		entry = readline(sh_data.history);
 		reset_input_mode();
-		print_newlines(entry->size);
+		ft_putendl_fd("", 2);
 		if (entry->size > 0)
 		{
 			history_add(sh_data.history, entry);
@@ -113,8 +119,6 @@ int	main(int argc, const char *argv[], const char **envp)
 		}
 		else
 			delete(entry);
-		//ft_fprintf(2, "sig %d\n", g_signal);
-		//sh_data.exec_params.status = 128 + g_signal;
 		ft_putstr_fd(PROMPT, 2);
 	}
 	return (0);

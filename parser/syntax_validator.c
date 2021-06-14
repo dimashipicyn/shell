@@ -58,10 +58,11 @@ static BOOLEAN	check_operators(t_vector *expression, char *sym)
 		if (ft_strchr("><|;", *sym))
 			op->method->push_back(op, sym);
 		else
+		{
+			previous(expression);
 			break ;
+		}
 	}
-	if (has_next(expression))
-		previous(expression);
 	if (op_is_available(op->mem) && (has_next(expression) || !ft_strcmp(op->mem, ";")))
 		is_correct = TRUE;
 	delete(op);
