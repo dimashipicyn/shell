@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 17:15:36 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/13 19:58:00 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/14 19:48:54 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ int	export_in_vector(t_vector *envp, char *str, int pos)
 
 int	print_export(t_vector *envp)
 {
-	char	*var_name;
 	char	*var_env;
 	char	*equal;
 
@@ -79,12 +78,7 @@ int	print_export(t_vector *envp)
 		if (equal == NULL)
 			ft_printf("%s", var_env);
 		else
-		{
-			write(1, var_env, equal - var_env + 1);
-			write(1, "\"", 1);
-			write(1, equal + 1, ft_strlen(equal));
-			write(1, "\"", 1);
-		}
+			ft_printf("%.*s\"%s\"", equal - var_env + 1, var_env, equal + 1);
 		write(1, "\n", 1);
 	}
 	envp->pos = 0;
