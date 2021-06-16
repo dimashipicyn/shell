@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/13 19:14:26 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/16 13:08:52 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ pid_t	fork_execve(char **argv, char **envp, char *path_name)
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		stat = execve(path_name, argv, envp);
-		//ft_errors(0);
+		ft_wprintf("%s", path_name);
 		exit(stat);
 	}
 	return (pid);
@@ -84,14 +84,19 @@ char	*filename_parser(char *filename, char **envp)
 	char	*str;
 	char	delim;
 
-	i = 0;
 	delim = ':';
 	if (!filename)
 		return(NULL);
-	if (ft_strchr("./", filename[0]))
-		return (ft_strdup(filename));
-	while(ft_strncmp(envp[i++], "PATH=", 5))
-		;
+	//if (ft_strchr("./", filename[0]))
+	//	return (ft_strdup(filename));
+	//while(ft_strncmp(envp[i++], "PATH=", 5))
+		//;
+	i = 0;
+	while (envp[i])
+	{
+		if (!ft_strncmp(envp[i++], "PATH=", 5))
+			break ;
+	}
 	str = envp[--i];
 	path_str = ft_split(str + 5, delim);
 	i = check_exist(path_str, filename);
@@ -114,7 +119,7 @@ int	open_pipe(t_main *arg)
 	i = pipe(file_des);
 	if (i != 0)
 	{
-		//ft_errors(0);
+		//ft_errors(0); TODO: asd
 		exit(1);
 	}
 	arg->fd_read = file_des[0];
@@ -243,9 +248,14 @@ int			launcher(t_main *arg, t_vector *envp)
 	ret = -1;
 	errno = 0;
 	str = NULL;
-	flag = builtins(*(arg->argv));
-	if (flag == FALSE)
-		str = filename_parser(*(arg->argv), envp->mem);
+	if (ft_strchr("./", **arg->argv))
+		str = ft_strdup(*arg->argv);
+	else
+	{
+		flag = builtins(*(arg->argv));
+		if (flag == FALSE)
+			str = filename_parser(*(arg->argv), envp->mem);
+	}
 	//errno = 0;
 	do_pipe(arg);
 	//errno = 0;
@@ -260,7 +270,7 @@ int			launcher(t_main *arg, t_vector *envp)
 	{
 		ret = fork_builtins(arg->argv, envp, flag);
 	}
-	if (*arg->argv && (ret < 0))
+	if ((*arg->argv && (ret < 0)) || (!str && ret < 0))
 		ft_wprintf("%s", *(arg->argv));
 	//errno = 0;
 	if (arg->pipe_in || arg->red_in > 0)
