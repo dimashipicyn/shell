@@ -28,6 +28,51 @@ static void	envp_copy(t_vector *envp_copy, const char **envp)
 	}
 }
 
+void	readline_stdin(t_vector *entry, char **bufptr)
+{
+	char	*s;
+	BOOLEAN	squote;
+	BOOLEAN	dquote;
+
+	s = *bufptr;
+	squote = FALSE;
+	dquote = FALSE;
+	while (*s && (!ft_isnewline(*s) || squote || dquote))
+	{
+		if (*s == '"' && squote)
+			dquote = ~dquote;
+		if (*s == '\'' && dquote)
+			squote = ~squote;
+		entry->method->push_back(entry, s);
+		s++;
+	}
+	while (*s && ft_isnewline(*s))
+		s++;
+	*bufptr = s;
+}
+
+void	interpret_stdin(t_sh_data *sh_data)
+{
+	t_vector	*entry;
+	char		buf[1001];
+	char		*bufptr;
+   
+	entry = new_vector(CHAR);
+	if (!entry)
+		ft_eprintf("interpret_stdin");
+	ft_bzero(buf, 1001);
+	read(0, buf, 1000);
+	bufptr = buf;
+	while (*bufptr)
+	{
+		readline_stdin(entry, &bufptr);
+		if (is_correct_syntax(entry))
+			parse_expression(sh_data, entry);
+		entry->method->clear(entry);
+	}
+	delete(entry);
+}
+
 static void	sh_init(t_sh_data *sh_data, const char **envp)
 {
 	t_history	*history;
@@ -49,20 +94,7 @@ static void	sh_init(t_sh_data *sh_data, const char **envp)
 	sh_data->exec_params = (t_exec_params){.red_in = -1, .red_out = -1};
 	if (!is_term)
 	{
-		t_vector *entry = new_vector(CHAR);
-		char buf[1001];
-		ft_bzero(buf, 1001);
-		read(0, buf, 1000);
-		int size = ft_strlen(buf);
-		if (size > 0)
-			size -= 1;
-		entry->method->load(entry, buf, size);
-		if (entry->size > 0)
-		{
-			if (is_correct_syntax(entry))
-				parse_expression(sh_data, entry);
-		}
-		delete(entry);
+		interpret_stdin(sh_data);
 		exit(0);
 	}
 }

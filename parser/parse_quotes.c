@@ -30,11 +30,12 @@ static BOOLEAN	parse_double_quotes(t_vector *expression,
 			return (TRUE);
 		else if (sym == '$' && prev_sym !='\\')
 			parse_env_variable(expression, token, sh_data);
-		else if (sym != '\\' || prev_sym == '\\')
-		{
-			token->method->push_back(token, &sym);
+		else if (sym == '\\' && prev_sym == '\\')
 			sym = 0;
-		}
+		else
+			token->method->push_back(token, &sym);
+		if ((sym == '"' || sym == '$') && prev_sym == '\\')
+			token->method->erase(token, token->size - 2);
 	}
 	return (FALSE);
 }
