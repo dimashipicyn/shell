@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/16 13:08:52 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/16 15:05:07 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,35 @@
 #include "structs.h"
 #include "utils.h"
 
-int			check_exist(char **path, char *file)
+int	check_exist(char **path, char *file)
 {
 	int				i;
 	DIR				*papka;
 	struct dirent	*example;
 
 	i = 0;
-	while(path[i])
+	while (path[i])
 	{
-		papka = 0;
-		if((papka = opendir(path[i])))
+		papka = opendir(path[i]);
+		while (papka)
 		{
-			while ((example = readdir(papka)))
+			example = readdir(papka);
+			if (!example)
+				break ;
+			if (ft_strcmp(example->d_name, file) == 0)
 			{
-				if (ft_strcmp(example->d_name, file) == 0)
-				{
-					closedir(papka);
-					return (i);
-				}
+				closedir(papka);
+				return (i);
 			}
-			closedir(papka);
 		}
+		if (papka)
+			closedir(papka);
 		i++;
 	}
 	return (-1);
 }
 
-char		*path_join(char *path_str, char *name)
+char	*path_join(char *path_str, char *name)
 {
 	char	*tmp;
 	char	*path_name;
@@ -86,11 +87,7 @@ char	*filename_parser(char *filename, char **envp)
 
 	delim = ':';
 	if (!filename)
-		return(NULL);
-	//if (ft_strchr("./", filename[0]))
-	//	return (ft_strdup(filename));
-	//while(ft_strncmp(envp[i++], "PATH=", 5))
-		//;
+		return (NULL);
 	i = 0;
 	while (envp[i])
 	{
@@ -102,11 +99,11 @@ char	*filename_parser(char *filename, char **envp)
 	i = check_exist(path_str, filename);
 	if (i < 0)
 	{
-		ft_free_array_ptr((void**)path_str);
+		ft_free_array_ptr((void **)path_str);
 		return (NULL);
 	}
 	str = path_join(path_str[i], filename);
-	ft_free_array_ptr((void**)path_str);
+	ft_free_array_ptr((void **)path_str);
 	return (str);
 }
 
@@ -118,10 +115,7 @@ int	open_pipe(t_main *arg)
 	errno = 0;
 	i = pipe(file_des);
 	if (i != 0)
-	{
-		//ft_errors(0); TODO: asd
-		exit(1);
-	}
+		ft_eprintf("open_pipe:");
 	arg->fd_read = file_des[0];
 	arg->fd_write = file_des[1];
 	return (0);
@@ -134,10 +128,7 @@ int	fd_replacement(int old_fd, int new_fd)
 	errno = 0;
 	i = dup2(old_fd, new_fd);
 	if (i < 0)
-	{
-		//ft_errors(0);
-		exit(1);
-	}
+		ft_eprintf("fd_replacement:");
 	return (0);
 }
 
@@ -239,40 +230,8 @@ int	builtins(char *name)
 	return (FALSE);
 }
 
-int			launcher(t_main *arg, t_vector *envp)
+void	after_pipes(t_main *arg)
 {
-	char	*str;
-	pid_t	ret;
-	int		flag;
-
-	ret = -1;
-	errno = 0;
-	str = NULL;
-	if (ft_strchr("./", **arg->argv))
-		str = ft_strdup(*arg->argv);
-	else
-	{
-		flag = builtins(*(arg->argv));
-		if (flag == FALSE)
-			str = filename_parser(*(arg->argv), envp->mem);
-	}
-	//errno = 0;
-	do_pipe(arg);
-	//errno = 0;
-	do_redir(arg);
-	if (str)
-	{
-		//errno = 0;
-		ret = fork_execve(arg->argv, envp->mem, str);
-		free(str);
-	}
-	else if (flag)
-	{
-		ret = fork_builtins(arg->argv, envp, flag);
-	}
-	if ((*arg->argv && (ret < 0)) || (!str && ret < 0))
-		ft_wprintf("%s", *(arg->argv));
-	//errno = 0;
 	if (arg->pipe_in || arg->red_in > 0)
 	{
 		fd_replacement(arg->save_fd_read, 0);
@@ -283,5 +242,44 @@ int			launcher(t_main *arg, t_vector *envp)
 		fd_replacement(arg->save_fd_write, 1);
 		close(arg->save_fd_write);
 	}
+}
+
+pid_t	choose_fork(t_main *arg, t_vector *envp, char *path_name, int flag)
+{
+	pid_t	ret;
+
+	ret = -1;
+	if (path_name)
+	{
+		ret = fork_execve(arg->argv, envp->mem, path_name);
+		free(path_name);
+	}
+	else if (flag)
+		ret = fork_builtins(arg->argv, envp, flag);
+	return (ret);
+}
+
+int	launcher(t_main *arg, t_vector *envp)
+{
+	char	*str;
+	pid_t	ret;
+	int		flag;
+
+	ret = -1;
+	errno = 0;
+	str = NULL;
+	flag = FALSE;
+	if (ft_strchr("./", **arg->argv))
+		str = ft_strdup(*arg->argv);
+	else
+		flag = builtins(*(arg->argv));
+	if (flag == FALSE && !str)
+		str = filename_parser(*(arg->argv), envp->mem);
+	do_pipe(arg);
+	do_redir(arg);
+	ret = choose_fork(arg, envp, str, flag);
+	if ((*arg->argv && (ret < 0)) || (!str && ret < 0))
+		ft_wprintf("%s", *(arg->argv));
+	after_pipes(arg);
 	return (ret);
 }
