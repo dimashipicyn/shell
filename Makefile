@@ -3,7 +3,7 @@ FLAGS = -Wall -Wextra -MMD# -g -fsanitize=address# -Werror
 VPATH := launcher:history:builtins:parser:readline:term:signal:include:Dlib
 SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c\
 	   parser.c parse_env_var.c parse_quotes.c syntax_validator.c\
-	   parse_argument.c parse_redirect.c interpret_stdin.c signal.c
+	   parse_argument.c parse_redirect.c interpret_stdin.c signal.c get_token.c
 SRCS += mediator.c launcher.c ft_echo.c ft_pwd.c ft_cd.c ft_export.c\
 		ft_env.c ft_unset.c pipeworks.c redirects.c filepath.c
 
