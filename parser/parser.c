@@ -93,8 +93,6 @@ void	release_resources(t_sh_data *sh_data)
 	close(sh_data->exec_params.red_out);
 	sh_data->exec_params.red_in = -1;
 	sh_data->exec_params.red_out = -1;
-	sh_data->exec_params.pipe_out = 0;
-	sh_data->exec_params.pipe_in = 0;
 	ft_free_array_ptr((void **)sh_data->exec_params.argv);
 	sh_data->exec_params.argv = 0;
 }
@@ -115,6 +113,8 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 //		ft_printf("err %d\n", err_not);
 		if (!err_not || !sh_data->exec_params.argv[0])
 		{
+			sh_data->exec_params.pipe_out = 0;
+			sh_data->exec_params.pipe_in = 0;
 			release_resources(sh_data);
 			break ;
 		}
