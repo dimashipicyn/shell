@@ -5,9 +5,9 @@
 # include <stdlib.h>
 # include "libft.h"
 
-#define PROMPT "\033[32mminishell:> \033[0m"
+# define PROMPT "\033[32mminishell:> \033[0m"
 
-typedef struct s_history t_history;
+typedef struct s_history	t_history;
 
 typedef struct s_exec_params
 {

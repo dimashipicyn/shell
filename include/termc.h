@@ -1,5 +1,5 @@
-#ifndef TERM_H
-# define TERM_H
+#ifndef TERMC_H
+# define TERMC_H
 # include <sys/ioctl.h>
 # include <term.h>
 

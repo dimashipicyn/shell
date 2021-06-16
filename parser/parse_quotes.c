@@ -40,7 +40,8 @@ static BOOLEAN	parse_double_quotes(t_vector *expression,
 	return (FALSE);
 }
 
-BOOLEAN	parse_quotes(t_vector *expression, t_vector *token, t_sh_data *sh_data, char quote)
+BOOLEAN	parse_quotes(t_vector *expression, t_vector *token,
+		t_sh_data *sh_data, char quote)
 {
 	BOOLEAN	ret;
 
