@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 # define UTILS_H
 
+void	env_starter(t_vector *envp);
 char	*filename_parser(char *filename, char **envp);
 pid_t	launcher(t_main *arg, t_vector *envp);
 int		locate_env(char *var, t_vector *envp);
