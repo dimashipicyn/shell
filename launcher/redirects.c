@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*   redirects.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/12 18:48:03 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/16 13:28:22 by tphung           ###   ########.fr       */
+/*   Created: 2021/06/16 16:25:56 by tphung            #+#    #+#             */
+/*   Updated: 2021/06/16 16:27:15 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,28 @@
 #include "structs.h"
 #include "utils.h"
 
-int	ft_unset(char **argv, t_vector *envp)
+int	do_redir_out(t_main *arg)
 {
-	int	i;
-	int	pos;
-
-	i = 1;
-	pos = -1;
-	while (argv[i])
-	{
-		pos = locate_env(argv[i], envp);
-		if (pos >= 0)
-		{
-			free(*(char **)envp->method->at(envp, pos));
-			envp->method->erase(envp, pos);
-		}
-		i++;
-	}
+	arg->save_fd_write = dup(1);
+	fd_replacement(arg->red_out, 1);
 	return (0);
+}
+
+int	do_redir_in(t_main *arg)
+{
+	if (arg->pipe_in == 0)
+		arg->save_fd_read = dup(0);
+	fd_replacement(arg->red_in, 0);
+	return (0);
+}
+
+int	do_redir(t_main *arg)
+{
+	if (arg->red_out == -1 && arg->red_in == -1)
+		return (0);
+	if (arg->red_in > 0)
+		do_redir_in(arg);
+	if (arg->red_out > 0)
+		do_redir_out(arg);
+	return (1);
 }
