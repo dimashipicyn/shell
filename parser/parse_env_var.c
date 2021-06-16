@@ -42,7 +42,8 @@ void	parse_env_variable(t_vector *expression,
 	t_vector	*parse_env;
 
 	parse_env = get_env_var(expression);
-	if (!parse_env->size)
+	s = get_next(expression);
+	if (!parse_env->size && *s != '\'' && *s != '"')
 		token->method->push_back(token, "$");
 	sh_data->envp->pos = 0;
 	while (parse_env->size && has_next(sh_data->envp))

@@ -15,7 +15,7 @@ static BOOLEAN	is_correct_quote(t_vector *expression, char quote)
 	while (has_next(expression))
 	{
 		sym = *(char *)next(expression);
-		if (sym == quote && prev_sym != BACKSLASH)
+		if (sym == quote && (prev_sym != BACKSLASH || quote == SINGLEQUOTE))
 			return (TRUE);
 		if (sym == BACKSLASH && prev_sym == BACKSLASH)
 			prev_sym = 0;

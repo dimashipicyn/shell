@@ -50,9 +50,11 @@ t_vector	*get_token(t_vector *expression, t_vector *tokens, t_sh_data *sh_data)
 			split_multitoken(token, tokens);
 		}
 		else if (sym != BACKSLASH || prev_sym == BACKSLASH)
+		{
 			token->method->push_back(token, &sym);
-		else
-			prev_sym = sym;
+			sym = 0;
+		}
+		prev_sym = sym;
 	}
 	return (token);
 }
@@ -109,7 +111,7 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 		parse_arguments(sh_data, expression);
 		err_not = parse_redirects(sh_data, expression);
 		parse_pipe(sh_data, expression);
-//		print_params(sh_data);
+	//	print_params(sh_data);
 //		ft_printf("err %d\n", err_not);
 		if (!err_not || !sh_data->exec_params.argv[0])
 		{
