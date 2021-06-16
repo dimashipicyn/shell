@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/16 16:45:46 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/16 19:06:17 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ pid_t	fork_builtins(char **argv, t_vector *envp, int flag)
 		exit(0);
 	else if (flag == 5)
 		stat = ft_unset(argv, envp);
+	else if (flag == 8)
+		env_starter(envp);
 	return (pid);
 }
 
@@ -76,6 +78,8 @@ int	builtins(char *name)
 		return (6);
 	if (!ft_strcmp(name, "exit"))
 		return (7);
+	if (!ft_strcmp(name, "env_start"))
+		return (8);
 	return (FALSE);
 }
 
