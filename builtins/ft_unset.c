@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 18:48:03 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/13 17:03:42 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/14 19:49:54 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	ft_unset(char **argv, t_vector *envp)
 		pos = locate_env(argv[i], envp);
 		if (pos >= 0)
 		{
-			free(*(char**)envp->method->at(envp, pos));
+			free(*(char **)envp->method->at(envp, pos));
 			envp->method->erase(envp, pos);
 		}
 		i++;

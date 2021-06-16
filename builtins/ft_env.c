@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 14:56:44 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/14 19:04:00 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/14 19:49:48 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	ft_env(t_vector *envp)
 	envp->pos = 0;
 	while (has_next(envp))
 	{
-		var_env = *(char**)next(envp);
+		var_env = *(char **)next(envp);
 		if (ft_strchr(var_env, '='))
 			ft_printf("%s\n", var_env);
 	}
