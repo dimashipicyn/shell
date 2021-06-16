@@ -6,11 +6,12 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 18:48:03 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/14 19:49:54 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/16 13:28:22 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "inc.h"
+#include "structs.h"
 #include "utils.h"
 
 int	ft_unset(char **argv, t_vector *envp)
