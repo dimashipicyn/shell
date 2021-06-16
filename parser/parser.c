@@ -37,7 +37,7 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 		parse_arguments(sh_data, expression);
 		err_not = parse_redirects(sh_data, expression);
 		parse_pipe(sh_data, expression);
-		if (!err_not || !sh_data->exec_params.argv[0])
+		if (!err_not)// || !sh_data->exec_params.argv[0])
 		{
 			sh_data->exec_params.pipe_out = 0;
 			sh_data->exec_params.pipe_in = 0;

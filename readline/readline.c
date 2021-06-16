@@ -31,7 +31,7 @@ void	close_minishell(char *s, t_history *history, BOOLEAN emptybuf)
 	if (*s == 4 && emptybuf)
 	{
 		ft_putendl_fd("exit", 1);
-		history_save_to_file(history, "test.txt");
+		history_save_to_file(history, HISTORY_PATH);
 		reset_input_mode();
 		exit(0);
 	}

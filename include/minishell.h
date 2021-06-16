@@ -40,5 +40,7 @@ BOOLEAN	is_correct_syntax(t_vector *expression);
 void	mediator(t_exec_params *exec_params, t_vector *envp);
 void	int_handler(int sig);
 void	quit_handler(int sig);
+int		get_signal(void);
+void	env_starter(t_vector *envp);
 
 #endif

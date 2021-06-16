@@ -13,3 +13,8 @@ void	int_handler(int sig)
 	g_signal = sig;
 	ft_putendl_fd("", 2);
 }
+
+int	get_signal(void)
+{
+	return (g_signal);
+}

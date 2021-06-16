@@ -31,7 +31,7 @@ static void	sh_init(t_sh_data *sh_data, const char **envp)
 	entry = new_vector(CHAR);
 	if (!envp_clone || !history || !entry)
 		ft_eprintf("");
-	history_load_in_file(history, "test.txt");
+	history_load_in_file(history, HISTORY_PATH);
 	history_push_front(history, entry);
 	envp_copy(envp_clone, envp);
 	*sh_data = (t_sh_data){.history = history, .envp = envp_clone};
@@ -41,6 +41,7 @@ static void	sh_init(t_sh_data *sh_data, const char **envp)
 		interpret_stdin(sh_data);
 		exit(0);
 	}
+	env_starter(envp_clone);
 }
 
 static void	minishell_usage(int ac, const char **av)
