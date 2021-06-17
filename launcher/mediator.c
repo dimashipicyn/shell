@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/17 16:25:24 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/17 19:01:34 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,8 @@ int	mediator(t_main *arg, t_vector *envp)
 	{
 		do_pipe(arg);
 		ft_fprintf(2, "minishell: : command not found\n");
-		after_pipes(arg);
+		if (arg->pipe_in || arg->pipe_out)
+			after_pipes(arg);
 	}
 	else
 	{
