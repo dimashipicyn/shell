@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/17 14:36:25 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/17 15:32:03 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,33 +53,44 @@ void	vector_init(t_main *arg)
 	}
 }
 
+int	waitpid_forall(t_main *arg)
+{
+	pid_t	pid;
+
+	pid = 0;
+	arg->pids->pos = 0;
+	while (has_next(arg->pids))
+	{
+		pid = *(pid_t *)next(arg->pids);
+		waitpid(pid, &(arg->status), 0);
+		arg->status = WEXITSTATUS(arg->status);
+	}
+	arg->pids->method->clear(arg->pids);
+	return (0);
+}
+
 int	mediator(t_main *arg, t_vector *envp)
 {
 	int		flag;
 	pid_t	pid;
 
+	pid = 0;
 	flag = check_flags(arg);
 	vector_init(arg);
-	pid = launcher(arg, envp);
-	if (pid > 0)
+	if (!arg->argv || !*arg->argv)
+		ft_fprintf(2, "command not found\n");
+	else
 	{
-		if (arg->pids->method->push_front(arg->pids, &pid) == FALSE)
-			ft_eprintf("mediator:");
-	}
-	else if ((pid == -1) || (pid == 0))
-		arg->status = pid * -1;
-	if (flag == TRUE)
-	{
-		arg->pids->pos = 0;
-		while (has_next(arg->pids))
+		pid = launcher(arg, envp);
+		if (pid > 0)
 		{
-			pid = *(pid_t *)next(arg->pids);
-			waitpid(pid, &(arg->status), 0);
-			arg->status = WEXITSTATUS(arg->status);
+			if (arg->pids->method->push_front(arg->pids, &pid) == FALSE)
+				ft_eprintf("mediator:");
 		}
-		arg->pids->method->clear(arg->pids);
+		else if ((pid == -1) || (pid == 0))
+			arg->status = pid * -1;
 	}
-	if (pid == -2)
-		return (-2);
-	return (0);
+	if (flag == TRUE)
+		waitpid_forall(arg);
+	return (pid);
 }
