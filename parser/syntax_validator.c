@@ -15,7 +15,7 @@ static BOOLEAN	is_correct_quote(t_vector *expression, char quote)
 	while (has_next(expression))
 	{
 		sym = *(char *)next(expression);
-		if (sym == quote && prev_sym != BACKSLASH)
+		if (sym == quote && (prev_sym != BACKSLASH || quote == SINGLEQUOTE))
 			return (TRUE);
 		if (sym == BACKSLASH && prev_sym == BACKSLASH)
 			prev_sym = 0;
@@ -27,10 +27,11 @@ static BOOLEAN	is_correct_quote(t_vector *expression, char quote)
 
 static BOOLEAN	op_is_available(char *op)
 {
-	char	*opps[] = {";", ">", "<", ">>", "<<", "|", 0};
+	char	**opps;
 	int		i;
 
 	i = 0;
+	opps = (char *[]){";", ">", "<", ">>", "<<", "|", 0};
 	while (opps[i])
 	{
 		if (!ft_strcmp(opps[i], op))
@@ -40,7 +41,7 @@ static BOOLEAN	op_is_available(char *op)
 	return (FALSE);
 }
 
-static BOOLEAN	check_operators(t_vector *expression, char *sym)
+static BOOLEAN	check_operators(t_vector *exp, char *sym)
 {
 	t_vector	*op;
 	BOOLEAN		is_correct;
@@ -50,25 +51,26 @@ static BOOLEAN	check_operators(t_vector *expression, char *sym)
 		ft_eprintf("malloc check operators");
 	is_correct = FALSE;
 	op->method->push_back(op, sym);
-	while (has_next(expression))
+	while (has_next(exp))
 	{
-		*sym = *(char *)next(expression);
+		*sym = *(char *)next(exp);
 		if (*sym == ' ')
 			continue ;
 		if (ft_strchr("><|;", *sym))
 			op->method->push_back(op, sym);
 		else
+		{
+			previous(exp);
 			break ;
+		}
 	}
-	if (has_next(expression))
-		previous(expression);
-	if (op_is_available(op->mem) && (has_next(expression) || !ft_strcmp(op->mem, ";")))
+	if (op_is_available(op->mem) && (has_next(exp) || !ft_strcmp(op->mem, ";")))
 		is_correct = TRUE;
 	delete(op);
 	return (is_correct);
 }
 
-static BOOLEAN	check_quotes(t_vector *expression)
+static BOOLEAN	check_quotes(t_vector *expression, char *err)
 {
 	BOOLEAN	is_correct;
 	char	sym;
@@ -92,18 +94,19 @@ static BOOLEAN	check_quotes(t_vector *expression)
 	}
 	if (sym == BACKSLASH)
 		is_correct = FALSE;
-	if (!is_correct)
-		ft_fprintf(2, "%s: syntax error near unexpected token '%c'\n", ft_getprogname(), sym);
+	*err = sym;
 	return (is_correct);
 }
 
 BOOLEAN	is_correct_syntax(t_vector *expression)
 {
 	BOOLEAN	is_correct;
+	char	sym;
 
 	is_correct = TRUE;
-	is_correct &= check_quotes(expression);
-	//if (!is_correct)
-	//	ft_printf("%s: syntax error\n", ft_getprogname());
+	is_correct &= check_quotes(expression, &sym);
+	if (!is_correct)
+		ft_fprintf(2, "%c: syntax error near unexpected token '%c'\n",
+			ft_getprogname(), sym);
 	return (is_correct);
 }

@@ -1,6 +1,8 @@
 #ifndef HISTORY_H
 # define HISTORY_H
 
+# define HISTORY_PATH ".minishell_history.txt"
+
 typedef struct s_history
 {
 	t_list	*list;

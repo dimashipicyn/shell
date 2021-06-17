@@ -5,9 +5,9 @@
 # include <stdlib.h>
 # include "libft.h"
 
-#define PROMPT "\033[32mminishell:> \033[0m"
+# define PROMPT "\033[32mminishell:> \033[0m"
 
-typedef struct s_history t_history;
+typedef struct s_history	t_history;
 
 typedef struct s_exec_params
 {
@@ -38,5 +38,9 @@ BOOLEAN	parse_quotes(t_vector *expression, t_vector *token,
 			t_sh_data *sh_data, char quote);
 BOOLEAN	is_correct_syntax(t_vector *expression);
 void	mediator(t_exec_params *exec_params, t_vector *envp);
+void	int_handler(int sig);
+void	quit_handler(int sig);
+int		get_signal(void);
+void	env_starter(t_vector *envp);
 
 #endif
