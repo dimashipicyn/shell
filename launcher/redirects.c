@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 16:25:56 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/16 16:27:15 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/17 16:10:38 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,13 @@
 
 int	do_redir_out(t_main *arg)
 {
-	arg->save_fd_write = dup(1);
+	if (arg->pipe_out == 0)
+		arg->save_fd_write = dup(1);
+	else if (arg->red_out > 0)
+	{
+		close(arg->fd_read);
+		fd_replacement(arg->red_out, arg->fd_read);
+	}
 	fd_replacement(arg->red_out, 1);
 	return (0);
 }

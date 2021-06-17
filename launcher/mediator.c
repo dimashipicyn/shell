@@ -6,13 +6,14 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/17 15:32:03 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/17 15:40:53 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "inc.h"
 #include "structs.h"
 #include "utils.h"
+#include "pipe_redirects.h"
 
 char	**matrix_dup(char	**src)
 {
@@ -78,7 +79,11 @@ int	mediator(t_main *arg, t_vector *envp)
 	flag = check_flags(arg);
 	vector_init(arg);
 	if (!arg->argv || !*arg->argv)
-		ft_fprintf(2, "command not found\n");
+	{
+		do_pipe(arg);
+		ft_fprintf(2, "minishell: : command not found\n");
+		after_pipes(arg);
+	}
 	else
 	{
 		pid = launcher(arg, envp);
