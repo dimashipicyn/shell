@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 15:59:49 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/17 16:18:24 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/17 16:23:57 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,9 @@ int	fd_replacement(int old_fd, int new_fd)
 	int		i;
 
 	errno = 0;
-	//ft_wprintf("NOT ERR old_fd %d - new_fd %d, fd_replacement:\n", old_fd, new_fd);
 	i = dup2(old_fd, new_fd);
 	if (i < 0)
-		ft_wprintf("ITS ERR old_fd %d - new_fd %d, fd_replacement:\n", old_fd, new_fd);
+		ft_eprintf("fd_replacement:");
 	return (0);
 }
 

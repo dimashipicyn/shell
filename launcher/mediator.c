@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/17 15:40:53 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/17 16:25:24 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,10 +88,7 @@ int	mediator(t_main *arg, t_vector *envp)
 	{
 		pid = launcher(arg, envp);
 		if (pid > 0)
-		{
-			if (arg->pids->method->push_front(arg->pids, &pid) == FALSE)
-				ft_eprintf("mediator:");
-		}
+			arg->pids->method->push_front(arg->pids, &pid);
 		else if ((pid == -1) || (pid == 0))
 			arg->status = pid * -1;
 	}
