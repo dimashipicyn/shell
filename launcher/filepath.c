@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 16:44:05 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/16 16:45:46 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/17 19:09:39 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ char	*filename_parser(char *filename, char **envp)
 	char	delim;
 
 	delim = ':';
-	if (!filename)
+	if (!filename || !envp || !*envp)
 		return (NULL);
 	i = 0;
 	while (envp[i])

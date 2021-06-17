@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/17 15:36:47 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/17 19:32:45 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,11 @@ pid_t	fork_execve(char **argv, char **envp, char *path_name)
 	else if (pid == 0)
 	{
 		errno = 0;
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
+		if (!ft_strcmp(path_name, "./minishell"))
+		{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
+		}
 		stat = execve(path_name, argv, envp);
 		ft_wprintf("%s", path_name);
 		exit(stat);
