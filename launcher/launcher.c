@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/16 19:06:17 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/17 12:40:09 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,23 @@ pid_t	fork_execve(char **argv, char **envp, char *path_name)
 
 pid_t	fork_builtins(char **argv, t_vector *envp, int flag)
 {
-	int		stat;
 	pid_t	pid;
 
 	pid = 0;
-	stat = 123;
 	if (flag == 1)
-		stat = ft_echo(argv + 1);
+		pid = ft_echo(argv + 1);
 	else if (flag == 4)
-		stat = ft_export(argv, envp);
+		pid = ft_export(argv, envp);
 	else if (flag == 2)
-		stat = ft_cd(argv, envp);
+		pid = ft_cd(argv, envp);
 	else if (flag == 3)
-		stat = ft_pwd();
+		pid = ft_pwd();
 	else if (flag == 6)
-		stat = ft_env(envp);
+		pid = ft_env(envp);
 	else if (flag == 7)
 		exit(0);
 	else if (flag == 5)
-		stat = ft_unset(argv, envp);
-	else if (flag == 8)
-		env_starter(envp);
+		pid = ft_unset(argv, envp);
 	return (pid);
 }
 

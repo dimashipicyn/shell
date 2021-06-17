@@ -6,17 +6,27 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/18 13:27:03 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/13 15:52:06 by lbespin          ###   ########.fr       */
+/*   Updated: 2021/06/17 12:15:44 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "inc.h"
 
-int	check_echo(char *str)
+int	check_echo(char **args)
 {
-	if (ft_strcmp("-n", str))
-		return (0);
-	return (1);
+	int	i;
+	int	flag;
+
+	i = 0;
+	flag = 0;
+	while (args[i])
+	{
+		if (!ft_strcmp("-n", args[i++]))
+			flag += 1;
+		else
+			break ;
+	}
+	return (flag);
 }
 
 int	ft_echo(char **args)
@@ -28,9 +38,9 @@ int	ft_echo(char **args)
 		write(1, "\n", 1);
 		return (0);
 	}
-	flag = check_echo(*args);
+	flag = check_echo(args);
 	if (flag)
-		args++;
+		args += flag;
 	while (*args)
 	{
 		write(1, *args, ft_strlen(*args));
