@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:26:52 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/17 12:46:57 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/17 14:36:25 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	mediator(t_main *arg, t_vector *envp)
 		if (arg->pids->method->push_front(arg->pids, &pid) == FALSE)
 			ft_eprintf("mediator:");
 	}
-	else
+	else if ((pid == -1) || (pid == 0))
 		arg->status = pid * -1;
 	if (flag == TRUE)
 	{
@@ -79,5 +79,7 @@ int	mediator(t_main *arg, t_vector *envp)
 		}
 		arg->pids->method->clear(arg->pids);
 	}
+	if (pid == -2)
+		return (-2);
 	return (0);
 }

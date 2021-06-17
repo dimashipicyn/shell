@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/30 15:11:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/06/17 14:16:56 by tphung           ###   ########.fr       */
+/*   Updated: 2021/06/17 14:33:14 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ pid_t	fork_builtins(char **argv, t_vector *envp, int flag)
 	else if (flag == 6)
 		pid = ft_env(envp);
 	else if (flag == 7)
-		exit(0);
+		pid = -2;
 	else if (flag == 5)
 		pid = ft_unset(argv, envp);
 	return (pid);
@@ -113,7 +113,7 @@ int	launcher(t_main *arg, t_vector *envp)
 	do_pipe(arg);
 	do_redir(arg);
 	ret = choose_fork(arg, envp, str, flag);
-	if ((*arg->argv && (ret < 0)) || (!str && ret < 0))
+	if ((*arg->argv && (ret == -1)) || (!str && ret == -1))
 		ft_wprintf("%s", *(arg->argv));
 	after_pipes(arg);
 	return (ret);
