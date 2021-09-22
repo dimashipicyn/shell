@@ -5,23 +5,23 @@
 
 #define PROMPT "\033[32mminishell:> \033[0m"
 
-static void	add_char(t_vector *buf, char *s, int *position)
+static void	add_char(Vector(char) *buf, char *s, int *position)
 {
 	while (*s && ft_isprint(*s))
 	{
-		buf->method->insert(buf, s, *position);
+		m_insert(buf, *s, *position);
 		*position += 1;
 		s++;
 	}
 }
 
-static void	delete_char(t_vector *buf, char ch, int *position)
+static void	delete_char(Vector(char) *buf, char ch, int *position)
 {
 	if (ch != 127)
 		return ;
 	if (*position > 0)
 	{
-		buf->method->erase(buf, *position - 1);
+		m_erase(buf, *position - 1);
 		*position -= 1;
 	}
 }
@@ -37,25 +37,25 @@ void	close_minishell(char *s, t_history *history, BOOLEAN emptybuf)
 	}
 }
 
-void	check_ctrl_c(char *s, t_vector *buf, int *cursor)
+void	check_ctrl_c(char *s, Vector(char) *buf, int *cursor)
 {
 	if (*s == 3)
 	{
-		buf->method->clear(buf);
+		m_clear(buf);
 		ft_putendl_fd("", 2);
 		ft_putstr_fd(PROMPT, 2);
 		*cursor = 0;
 	}
 }
 
-t_vector	*readline(t_history *history)
+Vector(char)	*readline(t_history *history)
 {
 	int			cursor;
 	char		s[1000];
-	t_vector	*buf;
+    Vector(char)	*buf;
 
 	cursor = 0;
-	buf = new_vector(CHAR);
+	buf = new(Vector(char));
 	if (!buf)
 		ft_eprintf("malloc readline");
 	ft_bzero(s, 1000);

@@ -1,7 +1,14 @@
 #include <fcntl.h>
 #include "libft.h"
+#include "vector.h"
 #include "history.h"
 
+/**
+ * New history object
+ * t_history *new_history(void);
+ * 
+ *
+ */
 t_history	*new_history(void)
 {
 	t_history	*new;
@@ -12,11 +19,16 @@ t_history	*new_history(void)
 	return (new);
 }
 
+/**
+ * Loading history
+ * void history_load_in_file(t_history *history, char *filename);
+ * 
+ */
 void	history_load_in_file(t_history *history, char *filename)
 {
 	int			fd;
 	char		*line;
-	t_vector	*new_entry;
+	Vector(char)	*new_entry;
 
 	fd = open(filename, O_RDONLY | O_CREAT,
 			S_IRWXU | S_IRWXG | S_IRWXO);
@@ -24,27 +36,32 @@ void	history_load_in_file(t_history *history, char *filename)
 		ft_eprintf("can't open %s", filename);
 	while (get_next_line(fd, &line) > 0)
 	{
-		new_entry = new_vector(CHAR);
+		new_entry = new(Vector(char));
 		if (!line || !new_entry)
 			ft_eprintf("");
-		new_entry->method->load(new_entry, line, ft_strlen(line));
+		m_load(new_entry, line, ft_strlen(line));
 		free(line);
 		history_push_back(history, new_entry);
 	}
-	new_entry = new_vector(CHAR);
+	new_entry = new(Vector(char));
 	if (!line || !new_entry)
 		ft_eprintf("");
-	new_entry->method->load(new_entry, line, ft_strlen(line));
+	m_load(new_entry, line, ft_strlen(line));
 	free(line);
 	history_push_back(history, new_entry);
 	close(fd);
 }
 
+/**
+ * Save history
+ * void history_save_to_file(t_history *history, char *filename);
+ * 
+ */
 void	history_save_to_file(t_history *history, char *filename)
 {
 	int			fd;
 	t_list		*list;
-	t_vector	*entry;
+    Vector(char)	*entry;
 
 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC,
 			S_IRWXU | S_IRWXG | S_IRWXO);
@@ -53,7 +70,7 @@ void	history_save_to_file(t_history *history, char *filename)
 	list = history->list->next;
 	while (list)
 	{
-		entry = (t_vector *)list->content;
+		entry = (Vector(char) *)list->content;
 		write(fd, entry->mem, entry->size);
 		list = list->next;
 		if (list)
@@ -61,7 +78,12 @@ void	history_save_to_file(t_history *history, char *filename)
 	}
 }
 
-void	history_add(t_history *history, t_vector *entry)
+/**
+ * Add entry to history
+ * Entry t_vector type, is container
+ * 
+ */
+void	history_add(t_history *history, Vector(char) *entry)
 {
 	ft_list_push_front(&(history->list->next), entry);
 	history->size += 1;
