@@ -11,20 +11,19 @@
 /* ************************************************************************** */
 
 #include "inc.h"
+#include "vector.h"
 
-int	ft_env(t_vector *envp)
+int	ft_env(Vector(char_ptr_t) *envp)
 {
 	int		pos;
 	char	*var_env;
 
 	pos = -1;
-	envp->pos = 0;
-	while (has_next(envp))
+	for (int i = 0; i < envp->size; i++)
 	{
-		var_env = *(char **)next(envp);
+		var_env = m_at(envp, i);
 		if (ft_strchr(var_env, '='))
 			ft_printf("%s\n", var_env);
 	}
-	envp->pos = 0;
 	return (0);
 }

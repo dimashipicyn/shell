@@ -23,7 +23,7 @@ typedef struct s_exec_params
 	int			save_fd_write;
 	int			status;
 	char		**argv;
-    Vector(char_ptr_t)	*envp;
+    Vector(int)	*pids;
 }	t_exec_params;
 
 typedef struct s_sh_data
@@ -34,15 +34,15 @@ typedef struct s_sh_data
 }	t_sh_data;
 
 void	parse_expression(t_sh_data *sh_data, Vector(char) *expression);
-void	parse_env_variable(Vector(char) *expression,
+void	parse_env_variable(Iterator(char) *iterExpr,
 			Vector(char) *token, t_sh_data *sh_data);
-BOOLEAN	parse_quotes(Vector(char) *expression, Vector(char) *token,
+BOOLEAN	parse_quotes(Iterator(char) *iterExpr, Vector(char) *token,
 			t_sh_data *sh_data, char quote);
 BOOLEAN	is_correct_syntax(Vector(char) *expression);
-void	mediator(t_exec_params *exec_params, Vector(char) *envp);
+void	mediator(t_exec_params *exec_params, Vector(char_ptr_t) *envp);
 void	int_handler(int sig);
 void	quit_handler(int sig);
 int		get_signal(void);
-void	env_starter(Vector(char) *envp);
+void	env_starter(Vector(char_ptr_t) *envp);
 
 #endif

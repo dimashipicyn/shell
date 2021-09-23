@@ -1,5 +1,6 @@
 #ifndef STRUCTS_H
 # define STRUCTS_H
+#include "vector.h"
 
 typedef struct s_main
 {
@@ -13,7 +14,7 @@ typedef struct s_main
 	int			save_fd_write;
 	int			status;
 	char		**argv;
-	t_vector	*pids;
+	Vector(int)	*pids;
 }	t_main;
 
 #endif

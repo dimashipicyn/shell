@@ -1,53 +1,53 @@
 #include "libft.h"
 #include "minishell.h"
 
-static BOOLEAN	parse_single_quotes(t_vector *expression, t_vector *token)
+static BOOLEAN	parse_single_quotes(Iterator(char) *iterExpr, Vector(char) *token)
 {
-	char		*ch;
+	char		ch;
 
-	while (has_next(expression))
+	while (m_has_next(iterExpr))
 	{
-		ch = next(expression);
-		if (*ch == '\'')
+		ch = m_next(iterExpr);
+		if (ch == '\'')
 			return (TRUE);
-		token->method->push_back(token, ch);
+		m_push_back(token, ch);
 	}
 	return (FALSE);
 }
 
-static BOOLEAN	parse_double_quotes(t_vector *expression,
-		t_vector *token, t_sh_data *sh_data)
+static BOOLEAN	parse_double_quotes(Iterator(char) *iterExpr,
+                                      Vector(char) *token, t_sh_data *sh_data)
 {
 	char		sym;
 	char		prev_sym;
 
 	sym = 0;
-	while (has_next(expression))
+	while (m_has_next(iterExpr))
 	{
 		prev_sym = sym;
-		sym = *(char *)next(expression);
+		sym = m_next(iterExpr);
 		if (sym == '"' && prev_sym !='\\')
 			return (TRUE);
 		else if (sym == '$' && prev_sym !='\\')
-			parse_env_variable(expression, token, sh_data);
+			parse_env_variable(iterExpr, token, sh_data);
 		else if (sym == '\\' && prev_sym == '\\')
 			sym = 0;
 		else
-			token->method->push_back(token, &sym);
+			m_push_back(token, sym);
 		if ((sym == '"' || sym == '$') && prev_sym == '\\')
-			token->method->erase(token, token->size - 2);
+			m_erase(token, token->size - 2);
 	}
 	return (FALSE);
 }
 
-BOOLEAN	parse_quotes(t_vector *expression, t_vector *token,
+BOOLEAN	parse_quotes(Iterator(char) *iterExpr, Vector(char) *token,
 		t_sh_data *sh_data, char quote)
 {
 	BOOLEAN	ret;
 
 	if (quote == '\'')
-		ret = parse_single_quotes(expression, token);
+		ret = parse_single_quotes(iterExpr, token);
 	if (quote == '"')
-		ret = parse_double_quotes(expression, token, sh_data);
+		ret = parse_double_quotes(iterExpr, token, sh_data);
 	return (ret);
 }

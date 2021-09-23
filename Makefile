@@ -1,11 +1,13 @@
 CC = gcc
 FLAGS = -Wall -Wextra -MMD# -g -fsanitize=address# -Werror
+
 VPATH := launcher:history:builtins:parser:readline:term:signal:include:Dlib:miniobjectc
+
 SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c\
-#	   syntax_validator.c#\
-	   #parser.c parse_env_var.c parse_quotes.c
-	   #parse_argument.c parse_redirect.c interpret_stdin.c signal.c get_token.c
-#SRCS += mediator.c launcher.c ft_echo.c ft_pwd.c ft_cd.c ft_export.c\
+	   syntax_validator.c\
+	   parser.c parse_env_var.c parse_quotes.c\
+	   parse_argument.c parse_redirect.c interpret_stdin.c signal.c get_token.c
+SRCS += mediator.c launcher.c ft_echo.c ft_pwd.c ft_cd.c ft_export.c\
 		ft_env.c ft_unset.c pipeworks.c redirects.c filepath.c envstarter.c
 
 INC = minishell.h parser.h history.h readline.h linenavigation.h termc.h inc.h utils.h structs.h\
@@ -18,11 +20,11 @@ LFT = libft.a
 
 .PHONY: all clean fclean re lib gitadd
 
-all: lib $(SRCS) $(NAME)
+all: lib $(NAME)
 	./minishell
 
 $(NAME): $(OBJ)
-		gcc $(FLAGS) $(OBJ) $(LFT) libminiooc.a -o $(NAME) -ltermcap
+		$(CC) $(FLAGS) $(OBJ) $(LFT) libminiooc.a -o $(NAME) -ltermcap
 
 lib:
 		make -C Dlib

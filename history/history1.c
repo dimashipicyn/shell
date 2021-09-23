@@ -9,14 +9,14 @@
  * 
  *
  */
-t_history	*new_history(void)
+t_history	*constructor_t_history(void *_self)
 {
-	t_history	*new;
+    Vector(char)    *entry = new(Vector(char));
+	t_history       *self = _self;
 
-	new = ft_calloc(1, sizeof(t_history));
-	if (!new)
-		ft_eprintf("");
-	return (new);
+    history_load_in_file(self, HISTORY_PATH);
+    history_push_front(self, entry);
+	return (self);
 }
 
 /**
@@ -26,29 +26,28 @@ t_history	*new_history(void)
  */
 void	history_load_in_file(t_history *history, char *filename)
 {
-	int			fd;
-	char		*line;
+	int		        fd;
+	int             not_empty;
+	char		    *line;
 	Vector(char)	*new_entry;
 
 	fd = open(filename, O_RDONLY | O_CREAT,
 			S_IRWXU | S_IRWXG | S_IRWXO);
 	if (fd < 0)
 		ft_eprintf("can't open %s", filename);
-	while (get_next_line(fd, &line) > 0)
+	not_empty = 1;
+	while (not_empty)
 	{
+	    not_empty = get_next_line(fd, &line);
 		new_entry = new(Vector(char));
 		if (!line || !new_entry)
 			ft_eprintf("");
-		m_load(new_entry, line, ft_strlen(line));
+		if (strlen(line) > 0) {
+		    m_load(new_entry, line, ft_strlen(line));
+		    history_push_back(history, new_entry);
+		}
 		free(line);
-		history_push_back(history, new_entry);
 	}
-	new_entry = new(Vector(char));
-	if (!line || !new_entry)
-		ft_eprintf("");
-	m_load(new_entry, line, ft_strlen(line));
-	free(line);
-	history_push_back(history, new_entry);
 	close(fd);
 }
 
@@ -72,9 +71,8 @@ void	history_save_to_file(t_history *history, char *filename)
 	{
 		entry = (Vector(char) *)list->content;
 		write(fd, entry->mem, entry->size);
+		write(fd, "\n", 1);
 		list = list->next;
-		if (list)
-			write(fd, "\n", 1);
 	}
 }
 

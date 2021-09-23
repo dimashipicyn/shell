@@ -14,12 +14,12 @@
 #include "structs.h"
 #include "utils.h"
 
-void	dunction(t_vector *envp, int pos)
+void	dunction(Vector(char_ptr_t) *envp, int pos)
 {
 	char	*str[3];
 	int		lvl;
 
-	str[0] = *(char **)envp->method->at(envp, pos);
+	str[0] = m_at(envp, pos);
 	str[1] = ft_strchr(str[0], '=');
 	lvl = ft_atoi(str[1] + 1);
 	if (lvl <= 0)
@@ -35,7 +35,7 @@ void	dunction(t_vector *envp, int pos)
 	free(str[1]);
 }
 
-void	do_shlvl(t_vector *envp)
+void	do_shlvl(Vector(char_ptr_t) *envp)
 {
 	int		pos;
 	char	*str;
@@ -44,13 +44,13 @@ void	do_shlvl(t_vector *envp)
 	if (pos < 0)
 	{
 		str = ft_strdup("SHLVL=1");
-		envp->method->push_back(envp, &str);
+		m_push_back(envp, str);
 	}
 	else
 		dunction(envp, pos);
 }
 
-void	do_minishell(t_vector *envp)
+void	do_minishell(Vector(char_ptr_t) *envp)
 {
 	char	*argv[4];
 
@@ -61,7 +61,7 @@ void	do_minishell(t_vector *envp)
 	ft_export(argv, envp);
 }
 
-void	env_starter(t_vector *envp)
+void	env_starter(Vector(char_ptr_t) *envp)
 {
 	int		pos;
 	char	*str;
@@ -73,7 +73,7 @@ void	env_starter(t_vector *envp)
 	}
 	else
 	{
-		str = *(char **)envp->method->at(envp, pos);
+		str = m_at(envp, pos);
 		if (ft_strcmp("SHELL=minishell", str) == 0)
 			do_shlvl(envp);
 		else

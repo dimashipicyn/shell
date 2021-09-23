@@ -14,7 +14,7 @@
 #include "structs.h"
 #include "utils.h"
 
-int	ft_unset(char **argv, t_vector *envp)
+int	ft_unset(char **argv, Vector(char_ptr_t) *envp)
 {
 	int	i;
 	int	pos;
@@ -26,8 +26,8 @@ int	ft_unset(char **argv, t_vector *envp)
 		pos = locate_env(argv[i], envp);
 		if (pos >= 0)
 		{
-			free(*(char **)envp->method->at(envp, pos));
-			envp->method->erase(envp, pos);
+			free(m_at(envp, pos));
+			m_erase(envp, pos);
 		}
 		i++;
 	}

@@ -36,7 +36,7 @@ pid_t	fork_execve(char **argv, char **envp, char *path_name)
 	return (pid);
 }
 
-pid_t	fork_builtins(char **argv, t_vector *envp, int flag)
+pid_t	fork_builtins(char **argv, Vector(char_ptr_t) *envp, int flag)
 {
 	int		stat;
 	pid_t	pid;
@@ -83,7 +83,7 @@ int	builtins(char *name)
 	return (FALSE);
 }
 
-pid_t	choose_fork(t_main *arg, t_vector *envp, char *path_name, int flag)
+pid_t	choose_fork(t_main *arg, Vector(char_ptr_t) *envp, char *path_name, int flag)
 {
 	pid_t	ret;
 
@@ -98,7 +98,7 @@ pid_t	choose_fork(t_main *arg, t_vector *envp, char *path_name, int flag)
 	return (ret);
 }
 
-int	launcher(t_main *arg, t_vector *envp)
+int	launcher(t_main *arg, Vector(char_ptr_t) *envp)
 {
 	char	*str;
 	pid_t	ret;

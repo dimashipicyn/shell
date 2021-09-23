@@ -1,7 +1,7 @@
 #include "minishell.h"
 #include "parser.h"
 
-static void	split_multitoken(t_vector *token, t_vector *tokens)
+static void	split_multitoken(Vector(char) *token, Vector(void_ptr_t) *tokens)
 {
 	char		**split;
 	int			it;
@@ -14,56 +14,61 @@ static void	split_multitoken(t_vector *token, t_vector *tokens)
 	it = 0;
 	while (it < last_elem)
 	{
-		tokens->method->push_back(tokens, split + it);
+		m_push_back(tokens, split + it);
 		it++;
 	}
 	if (last_elem >= 0)
 	{
-		token->method->load(token,
-			split[last_elem], ft_strlen(split[last_elem]));
+		m_load(token,split[last_elem], ft_strlen(split[last_elem]));
 		free(split[last_elem]);
 	}
 	free(split);
 }
 
 static void	parse_token(t_sh_data *sh_data,
-		t_vector *expression, t_vector *token, t_vector *tokens)
+                           Iterator(char) *iterExpr, Vector(char) *token, Vector(void_ptr_t) *tokens)
 {
 	char		sym;
 	char		prev_sym;
 
 	prev_sym = 0;
-	while (has_next(expression))
+	while (m_has_next(iterExpr))
 	{
-		sym = *(char *)get_next(expression);
+		sym = m_next(iterExpr);
 		if (ft_strchr(" ><|;", sym) && prev_sym != BACKSLASH)
 			break ;
-		next(expression);
+		//m_next(iterExpr);
 		if ((sym == SINGLEQUOTE || sym == DOUBLEQUOTE) && prev_sym != BACKSLASH)
-			parse_quotes(expression, token, sh_data, sym);
+			parse_quotes(iterExpr, token, sh_data, sym);
 		else if (sym == DOLOR && prev_sym != BACKSLASH)
 		{
-			parse_env_variable(expression, token, sh_data);
+			parse_env_variable(iterExpr, token, sh_data);
 			split_multitoken(token, tokens);
 		}
 		else if (sym != BACKSLASH || prev_sym == BACKSLASH)
 		{
-			token->method->push_back(token, &sym);
+			m_push_back(token, sym);
 			sym = 0;
 		}
 		prev_sym = sym;
 	}
 }
 
-t_vector	*get_token(t_vector *expression,
-			t_vector *tokens, t_sh_data *sh_data)
+Vector(char)	*get_token(Iterator(char) *iterExpr,
+                       Vector(void_ptr_t) *tokens, t_sh_data *sh_data)
 {
-	t_vector	*token;
+    Vector(char)	*token;
 
-	token = new_vector(CHAR);
+	token = new(Vector(char));
 	if (!token)
 		ft_eprintf("get token");
-	skip_delimiters(expression, " ");
-	parse_token(sh_data, expression, token, tokens);
+	//skip_delimiters(expression, " ");
+	while (m_has_next(iterExpr)) {
+	    if (m_next(iterExpr) != ' ') {
+	        m_prev(iterExpr);
+	        break;
+	    }
+	}
+	parse_token(sh_data, iterExpr, token, tokens);
 	return (token);
 }

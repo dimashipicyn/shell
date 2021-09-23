@@ -14,28 +14,27 @@
 #include "structs.h"
 #include "utils.h"
 
-char	*envp_var_eject(t_vector *envp, int src_pos)
+char	*envp_var_eject(Vector(char_ptr_t) *envp, int src_pos)
 {
 	char	*res;
 
-	res = *(char **)envp->method->at(envp, src_pos);
-	res = ft_substr(res, \
-		1 + ft_strchr(res, '=') - res, ft_strlen(res));
+	res = m_at(envp, src_pos);
+	res = ft_substr(res,1 + ft_strchr(res, '=') - res, ft_strlen(res));
 	return (res);
 }
 
-int	var_export(t_vector *envp, int dest_pos, char *var, char *dest_var_name)
+int	var_export(Vector(char_ptr_t) *envp, int dest_pos, char *var, char *dest_var_name)
 {
 	char		*dest;
 
 	dest = ft_strjoin(dest_var_name, var);
-	free(*(char **)envp->method->at(envp, dest_pos));
-	envp->method->erase(envp, dest_pos);
-	envp->method->insert(envp, &dest, dest_pos);
+	free(m_at(envp, dest_pos));
+	m_erase(envp, dest_pos);
+	m_insert(envp, dest, dest_pos);
 	return (0);
 }
 
-int	pwd_export(t_vector *envp, char *old_pwd)
+int	pwd_export(Vector(char_ptr_t) *envp, char *old_pwd)
 {
 	int		pos_pwd;
 	int		pos_old;
@@ -60,7 +59,7 @@ int	pwd_export(t_vector *envp, char *old_pwd)
 	return (0);
 }
 
-int	ft_cd(char **args, t_vector *envp)
+int	ft_cd(char **args, Vector(char_ptr_t) *envp)
 {
 	int		pos;
 	char	*dir;

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static void	readline_stdin(t_vector *entry, char **bufptr)
+static void	readline_stdin(Vector(char) *entry, char **bufptr)
 {
 	char	*s;
 	BOOLEAN	squote;
@@ -15,7 +15,7 @@ static void	readline_stdin(t_vector *entry, char **bufptr)
 			dquote = ~dquote;
 		if (*s == '\'' && dquote)
 			squote = ~squote;
-		entry->method->push_back(entry, s);
+		m_push_back(entry, *s);
 		s++;
 	}
 	while (*s && ft_isnewline(*s))
@@ -25,11 +25,11 @@ static void	readline_stdin(t_vector *entry, char **bufptr)
 
 void	interpret_stdin(t_sh_data *sh_data)
 {
-	t_vector	*entry;
-	char		buf[1001];
-	char		*bufptr;
+    Vector(char)	*entry;
+	char		    buf[1001];
+	char		    *bufptr;
 
-	entry = new_vector(CHAR);
+	entry = new(Vector(char));
 	if (!entry)
 		ft_eprintf("interpret_stdin");
 	ft_bzero(buf, 1001);
@@ -40,7 +40,7 @@ void	interpret_stdin(t_sh_data *sh_data)
 		readline_stdin(entry, &bufptr);
 		if (is_correct_syntax(entry))
 			parse_expression(sh_data, entry);
-		entry->method->clear(entry);
+		m_clear(entry);
 	}
 	delete(entry);
 }

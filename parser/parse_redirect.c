@@ -34,33 +34,38 @@ static BOOLEAN	open_file(t_sh_data *sh_data, char *op, char *filename)
 	return (is_open);
 }
 
-static t_vector	*get_operator(t_vector *expression)
+static Vector(char)	*get_operator(Iterator(char) *iterExpr)
 {
-	char		sym;
-	t_vector	*token;
+	char		    sym;
+    Vector(char)	*op;
 
-	token = new_vector(CHAR);
-	if (!token)
+	op = new(Vector(char));
+	if (!op)
 		ft_eprintf("get_operator");
-	skip_delimiters(expression, " ");
-	while (has_next(expression))
+	while (m_has_next(iterExpr)) {
+	    if (m_next(iterExpr) != ' ') {
+	        m_prev(iterExpr);
+	        break;
+	    }
+	}
+	while (m_has_next(iterExpr))
 	{
-		sym = *(char *)next(expression);
+		sym = m_next(iterExpr);
 		if (!ft_strchr("><", sym))
 		{
-			previous(expression);
+			m_prev(iterExpr);
 			break ;
 		}
-		token->method->push_back(token, &sym);
+		m_push_back(op, sym);
 	}
-	return (token);
+	return (op);
 }
 
 static BOOLEAN	parse_input_to_delimiter(t_sh_data *sh_data,
 	char *op, char *delim)
 {
-	t_vector	*entry;
-	int			fd[2];
+    Vector(char)	*entry;
+	int			    fd[2];
 
 	if (ft_strcmp(op, "<<") != 0)
 		return (TRUE);
@@ -73,33 +78,34 @@ static BOOLEAN	parse_input_to_delimiter(t_sh_data *sh_data,
 		entry = readline(sh_data->history);
 		reset_input_mode();
 		ft_putendl_fd("", 2);
-		if (!ft_strcmp(delim, entry->mem))
-			break ;
+		if (!ft_strcmp(delim, entry->mem)) {
+		    delete(entry);
+		    break ;
+		}
 		write(fd[1], entry->mem, entry->size);
 		write(fd[1], "\n", 1);
 		delete(entry);
 	}
-	delete(entry);
 	close(fd[1]);
 	sh_data->exec_params.red_in = fd[0];
 	return (TRUE);
 }
 
-BOOLEAN	parse_redirects(t_sh_data *sh_data, t_vector *expression)
+BOOLEAN	parse_redirects(t_sh_data *sh_data, Iterator(char) *iterExpr)
 {
-	t_vector	*operator;
-	t_vector	*operand;
-	t_vector	*tokens;
-	BOOLEAN		is_open;
+    Vector(char)	    *operator;
+    Vector(char)	    *operand;
+    Vector(void_ptr_t)	*tokens;
+	BOOLEAN		        is_open;
 
 	is_open = TRUE;
-	tokens = new_vector(PTR);
+	tokens = new(Vector(void_ptr_t));
 	if (!tokens)
 		ft_eprintf("malloc parse_redirects");
-	operator = get_operator(expression);
-	while (has_next(expression) && operator->size && is_open)
+	operator = get_operator(iterExpr);
+	while (m_has_next(iterExpr) && operator->size && is_open)
 	{
-		operand = get_token(expression, tokens, sh_data);
+		operand = get_token(iterExpr, tokens, sh_data);
 		if (tokens->size != 0)
 			ft_wprintf("ambiguous redirect");
 		is_open = open_file(sh_data, operator->mem, operand->mem);
@@ -107,7 +113,7 @@ BOOLEAN	parse_redirects(t_sh_data *sh_data, t_vector *expression)
 				operator->mem, operand->mem);
 		delete(operator);
 		delete(operand);
-		operator = get_operator(expression);
+		operator = get_operator(iterExpr);
 	}
 	delete(operator);
 	delete(tokens);

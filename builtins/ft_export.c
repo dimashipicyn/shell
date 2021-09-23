@@ -11,22 +11,22 @@
 /* ************************************************************************** */
 
 #include "inc.h"
+#include "vector.h"
 
-int	locate_env(char *var, t_vector *envp)
+int	locate_env(char *var, Vector(char_ptr_t) *envp)
 {
 	int		pos;
 	int		equal;
 	char	*var_env;
 
 	pos = -1;
-	envp->pos = 0;
-	while (has_next(envp))
+	for (int i = 0; i < envp->size; i++)
 	{
-		var_env = *(char **)next(envp);
+		var_env = m_at(envp, i);
 		equal = ft_strchr(var_env, '=') - var_env;
 		if (ft_strncmp(var_env, var, equal) == 0)
 		{
-			return (envp->pos - 1);
+			return (i);
 		}
 	}
 	return (pos);
@@ -49,31 +49,30 @@ char	*choose_name(char *full_var)
 	return (str);
 }
 
-int	export_in_vector(t_vector *envp, char *str, int pos)
+int	export_in_vector(Vector(char_ptr_t) *envp, char *str, int pos)
 {
 	if (pos >= 0 && ft_strchr(str, '=') > 0)
 	{
-		free(*(char **)envp->method->at(envp, pos));
-		envp->method->erase(envp, pos);
-		envp->method->insert(envp, &str, pos);
+		free(m_at(envp, pos));
+		m_erase(envp, pos);
+		m_insert(envp, str, pos);
 	}
 	else if (pos < 0)
-		envp->method->push_back(envp, &str);
+		m_push_back(envp, str);
 	else
 		free(str);
 	return (0);
 }
 
-int	print_export(t_vector *envp)
+int	print_export(Vector(char_ptr_t) *envp)
 {
 	char	*var_env;
 	char	*equal;
 
-	envp->pos = 0;
-	while (has_next(envp))
+	for (int i = 0; i < envp->size; i++)
 	{
 		write(1, "declare -x ", 11);
-		var_env = *(char **)next(envp);
+		var_env = m_at(envp, i);
 		equal = ft_strchr(var_env, '=');
 		if (equal == NULL)
 			ft_printf("%s", var_env);
@@ -81,11 +80,10 @@ int	print_export(t_vector *envp)
 			ft_printf("%.*s\"%s\"", equal - var_env + 1, var_env, equal + 1);
 		write(1, "\n", 1);
 	}
-	envp->pos = 0;
 	return (0);
 }
 
-int	ft_export(char **argv, t_vector *envp)
+int	ft_export(char **argv, Vector(char_ptr_t) *envp)
 {
 	int		i;
 	int		pos;

@@ -1,18 +1,20 @@
 #include "minishell.h"
 #include "parser.h"
 
-void	parse_pipe(t_sh_data *sh_data, t_vector *expression)
+void	parse_pipe(t_sh_data *sh_data, Iterator(char) *iterExpr)
 {
 	char		sym;
 
 	sym = 0;
-	if (has_next(expression))
-		sym = *(char *)next(expression);
 	sh_data->exec_params.pipe_in = sh_data->exec_params.pipe_out;
-	if (sym == '|')
-		sh_data->exec_params.pipe_out = TRUE;
-	else
-		sh_data->exec_params.pipe_out = FALSE;
+	sh_data->exec_params.pipe_out = FALSE;
+	if (m_has_next(iterExpr)) {
+	    sym = m_next(iterExpr);
+	    if (sym == '|')
+	        sh_data->exec_params.pipe_out = TRUE;
+	    else
+	        m_prev(iterExpr);
+	}
 }
 
 void	release_resources(t_sh_data *sh_data)
@@ -25,18 +27,29 @@ void	release_resources(t_sh_data *sh_data)
 	sh_data->exec_params.argv = 0;
 }
 
-void	parse_expression(t_sh_data *sh_data, t_vector *expression)
+void print(t_sh_data *sh_data)
 {
-	BOOLEAN		err_not;
+    printf("pipe in %d\n", sh_data->exec_params.pipe_in);
+    printf("pipe out %d\n", sh_data->exec_params.pipe_out);
+    printf("red in %d\n", sh_data->exec_params.red_in);
+    printf("red out %d\n", sh_data->exec_params.red_out);
+    for (int i = 0; sh_data->exec_params.argv[i] != 0; i++)
+        printf("argv [%d] %s\n", i, sh_data->exec_params.argv[i]);
+}
+void	parse_expression(t_sh_data *sh_data, Vector(char) *expression)
+{
+	BOOLEAN		    err_not;
+    Iterator(char)  *iterExpr;
 
-	expression->pos = 0;
 	err_not = TRUE;
-	while (has_next(expression))
+	iterExpr = $(Iterator(char), expression);
+	while (m_has_next(iterExpr))
 	{
 		errno = 0;
-		parse_arguments(sh_data, expression);
-		err_not = parse_redirects(sh_data, expression);
-		parse_pipe(sh_data, expression);
+		parse_arguments(sh_data, iterExpr);
+		err_not = parse_redirects(sh_data, iterExpr);
+		parse_pipe(sh_data, iterExpr);
+        print(sh_data);
 		if (!err_not)// || !sh_data->exec_params.argv[0])
 		{
 			sh_data->exec_params.pipe_out = 0;
@@ -44,7 +57,6 @@ void	parse_expression(t_sh_data *sh_data, t_vector *expression)
 			release_resources(sh_data);
 			break ;
 		}
-		errno = 0;
 		mediator(&(sh_data->exec_params), sh_data->envp);
 		release_resources(sh_data);
 	}

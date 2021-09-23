@@ -1,3 +1,6 @@
 [submodule "Dlib"]
 	path = Dlib
 	url = https://github.com/dimashipicyn/Dlib.git
+[submodule "miniobjectc"]
+	path = miniobjectc
+	url = git@github.com:dimashipicyn/miniobjectc.git

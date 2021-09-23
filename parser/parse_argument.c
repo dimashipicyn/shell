@@ -2,29 +2,30 @@
 #include "minishell.h"
 #include "parser.h"
 
-void	parse_arguments(t_sh_data *sh_data, t_vector *expression)
+void	parse_arguments(t_sh_data *sh_data, Iterator(char) *iterExpr)
 {
-	t_vector	*token;
-	t_vector	*args;
-	char		sym;
+    Vector(char)	    *token;
+    Vector(void_ptr_t)	*args;
+	char		        sym;
 
-	args = new_vector(PTR);
+	args = new(Vector(void_ptr_t));
 	if (!args)
 		ft_eprintf("parse arguments");
-	while (has_next(expression))
+	while (m_has_next(iterExpr))
 	{
-		sym = *(char *)get_next(expression);
-		if (ft_strchr("<>|;", sym))
-			break ;
-		token = get_token(expression, args, sh_data);
+		sym = m_get(iterExpr);
+		if (ft_strchr("<>|;", sym)) {
+		    break ;
+		}
+		token = get_token(iterExpr, args, sh_data);
 		if (token->size != 0)
 		{
-			args->method->push_back(args, &(token->mem));
+			m_push_back(args, token->mem);
 			free(token);
 		}
 		else
 			delete(token);
 	}
-	sh_data->exec_params.argv = args->mem;
+	sh_data->exec_params.argv = (char **)args->mem;
 	free(args);
 }

@@ -6,15 +6,15 @@
 #define BACKSLASH '\\'
 #define DOLOR '$'
 
-static BOOLEAN	is_correct_quote(t_vector *expression, char quote)
+static BOOLEAN	is_correct_quote(Iterator(char) *iter, char quote)
 {
 	char	sym;
 	char	prev_sym;
 
 	prev_sym = 0;
-	while (has_next(expression))
+	while (m_has_next(iter))
 	{
-		sym = *(char *)next(expression);
+		sym = m_next(iter);
 		if (sym == quote && (prev_sym != BACKSLASH || quote == SINGLEQUOTE))
 			return (TRUE);
 		if (sym == BACKSLASH && prev_sym == BACKSLASH)
@@ -41,72 +41,70 @@ static BOOLEAN	op_is_available(char *op)
 	return (FALSE);
 }
 
-static BOOLEAN	check_operators(t_vector *exp, char *sym)
+static BOOLEAN	check_operators(Iterator(char) *iter, char *sym)
 {
-	t_vector	*op;
-	BOOLEAN		is_correct;
+    Vector(char)	*op;
+	BOOLEAN		    is_correct;
 
-	op = new_vector(CHAR);
+	op = new(Vector(char));
 	if (!op)
 		ft_eprintf("malloc check operators");
 	is_correct = FALSE;
-	op->method->push_back(op, sym);
-	while (has_next(exp))
+	m_push_back(op, *sym);
+	while (m_has_next(iter))
 	{
-		*sym = *(char *)next(exp);
+		*sym = m_next(iter);
 		if (*sym == ' ')
-			continue ;
+            continue;
 		if (ft_strchr("><|;", *sym))
-			op->method->push_back(op, sym);
-		else
-		{
-			previous(exp);
-			break ;
+		    m_push_back(op, *sym);
+		else {
+            m_prev(iter);
+            break;
 		}
 	}
-	if (op_is_available(op->mem) && (has_next(exp) || !ft_strcmp(op->mem, ";")))
+	if (op_is_available(op->mem) && (m_has_next(iter) || !ft_strcmp(op->mem, ";")))
 		is_correct = TRUE;
 	delete(op);
 	return (is_correct);
 }
 
-static BOOLEAN	check_quotes(t_vector *expression, char *err)
+static BOOLEAN	check_quotes(Iterator(char) *iter)
 {
 	BOOLEAN	is_correct;
 	char	sym;
 	char	prev_sym;
 
 	is_correct = TRUE;
-	expression->pos = 0;
 	sym = 0;
-	while (has_next(expression))
+	while (m_has_next(iter) && is_correct)
 	{
 		prev_sym = sym;
-		sym = *(char *)next(expression);
+		sym = m_next(iter);
 		if (sym == DOUBLEQUOTE && prev_sym != BACKSLASH)
-			is_correct &= is_correct_quote(expression, DOUBLEQUOTE);
+			is_correct &= is_correct_quote(iter, DOUBLEQUOTE);
 		else if (sym == SINGLEQUOTE && prev_sym != BACKSLASH)
-			is_correct &= is_correct_quote(expression, SINGLEQUOTE);
+			is_correct &= is_correct_quote(iter, SINGLEQUOTE);
 		else if (ft_strchr("><|;", sym) && prev_sym != BACKSLASH)
-			is_correct &= check_operators(expression, &sym);
+			is_correct &= check_operators(iter, &sym);
 		else if (sym == BACKSLASH && prev_sym == BACKSLASH)
 			sym = 0;
 	}
 	if (sym == BACKSLASH)
 		is_correct = FALSE;
-	*err = sym;
+	if (!is_correct)
+	    ft_fprintf(2, "%s: syntax error near unexpected token '%c'\n",
+                   getprogname(), sym);
 	return (is_correct);
 }
 
-BOOLEAN	is_correct_syntax(t_vector *expression)
+BOOLEAN	is_correct_syntax(Vector(char) *expression)
 {
-	BOOLEAN	is_correct;
-	char	sym;
+	BOOLEAN	        is_correct;
+    Iterator(char)  *iter;
 
+    iter = $(Iterator(char), expression);
 	is_correct = TRUE;
-	is_correct &= check_quotes(expression, &sym);
-	if (!is_correct)
-		ft_fprintf(2, "%c: syntax error near unexpected token '%c'\n",
-			ft_getprogname(), sym);
+	is_correct &= check_quotes(iter);
 	return (is_correct);
 }

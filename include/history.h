@@ -11,14 +11,14 @@ typedef struct s_history
 	size_t	head;
 }	t_history;
 
-t_history	*new_history(void);
+t_history	    *constructor_t_history(void *_self);
 Vector(char)	*history_next_entry(t_history *history);
 Vector(char)	*history_prev_entry(t_history *history);
 Vector(char)	*history_get_entry(t_history *history);
-void		history_push_front(t_history *history, Vector(char) *v);
-void		history_push_back(t_history *history, Vector(char) *v);
-void		history_load_in_file(t_history *history, char *filename);
-void		history_save_to_file(t_history *history, char *filename);
-void		history_add(t_history *history, Vector(char) *entry);
+void		    history_push_front(t_history *history, Vector(char) *v);
+void		    history_push_back(t_history *history, Vector(char) *v);
+void		    history_load_in_file(t_history *history, char *filename);
+void		    history_save_to_file(t_history *history, char *filename);
+void		    history_add(t_history *history, Vector(char) *entry);
 
 #endif

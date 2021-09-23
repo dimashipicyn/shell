@@ -3,8 +3,6 @@
 #include "termc.h"
 #include "linenavigation.h"
 
-#define PROMPT "\033[32mminishell:> \033[0m"
-
 static void	add_char(Vector(char) *buf, char *s, int *position)
 {
 	while (*s && ft_isprint(*s))
@@ -50,15 +48,15 @@ void	check_ctrl_c(char *s, Vector(char) *buf, int *cursor)
 
 Vector(char)	*readline(t_history *history)
 {
-	int			cursor;
-	char		s[1000];
+	int			    cursor;
+	char		    s[1000];
     Vector(char)	*buf;
 
 	cursor = 0;
 	buf = new(Vector(char));
 	if (!buf)
 		ft_eprintf("malloc readline");
-	ft_bzero(s, 1000);
+	memset(s, 0, 1000);
 	while (!ft_isnewline(*s))
 	{
 		move_left(buf->size - cursor);

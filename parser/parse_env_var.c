@@ -1,35 +1,35 @@
 #include "libft.h"
 #include "minishell.h"
 
-static t_vector	*get_env_var(t_vector *expression)
+static Vector(char)	*get_env_var(Iterator(char) *iterExpr)
 {
-	char		ch;
-	t_vector	*str;
+	char		    ch;
+    Vector(char)	*str;
 
-	str = new_vector(CHAR);
+	str = new(Vector(char));
 	ch = 0;
 	if (!str)
 		ft_eprintf("get_env_var");
-	if (has_next(expression))
-		ch = *(char *)next(expression);
+	if (m_has_next(iterExpr))
+		ch = m_next(iterExpr);
 	if (ch == '?' || ft_isdigit(ch))
 	{
-		str->method->push_back(str, &ch);
+		m_push_back(str, ch);
 		return (str);
 	}
-	while (has_next(expression))
+	while (m_has_next(iterExpr))
 	{
 		if (ft_isalnum(ch))
-			str->method->push_back(str, &ch);
+			m_push_back(str, ch);
 		else
 			break ;
-		ch = *(char *)next(expression);
+		ch = m_next(iterExpr);
 	}
-	previous(expression);
+	m_prev(iterExpr);
 	return (str);
 }
 
-static void	parse_exit_status(t_sh_data *sh_data, t_vector *token)
+static void	parse_exit_status(t_sh_data *sh_data, Vector(char) *token)
 {
 	char	*s;
 	int		status;
@@ -40,31 +40,32 @@ static void	parse_exit_status(t_sh_data *sh_data, t_vector *token)
 	s = ft_itoa(status);
 	if (!s)
 		ft_eprintf("parse_exit_status");
-	token->method->add_mem(token, s, ft_strlen(s));
+	m_add_mem(token, s, ft_strlen(s));
 	free(s);
 }
 
-void	parse_env_variable(t_vector *expression,
-		t_vector *token, t_sh_data *sh_data)
+void	parse_env_variable(Iterator(char) *iterExpr,
+                           Vector(char) *token, t_sh_data *sh_data)
 {
-	char		*next_env;
-	char		*s;
-	t_vector	*parse_env;
+	char		    *next_env;
+	char		    ch;
+	char            *s;
+    Vector(char)	*parse_env;
 
-	parse_env = get_env_var(expression);
-	if (has_next(expression))
-		s = get_next(expression);
-	if (!parse_env->size && *s != '\'' && *s != '"')
-		token->method->push_back(token, "$");
-	sh_data->envp->pos = 0;
-	while (parse_env->size && has_next(sh_data->envp))
+	parse_env = get_env_var(iterExpr);
+	if (m_has_next(iterExpr))
+		ch = m_next(iterExpr); // get_next FIXME
+	if (!parse_env->size && ch != '\'' && ch != '"')
+		m_push_back(token, '$');
+	//while (parse_env->size && has_next(sh_data->envp))
+	for (int i = 0; i < sh_data->envp->size; i++)
 	{
-		next_env = *(char **)next(sh_data->envp);
+		next_env = m_at(sh_data->envp, i);
 		s = ft_strchr(next_env, '=');
 		if (s && !ft_strncmp(next_env, parse_env->mem, parse_env->size))
 		{
 			s++;
-			token->method->add_mem(token, s, ft_strlen(s));
+			m_add_mem(token, s, ft_strlen(s));
 			break ;
 		}
 	}

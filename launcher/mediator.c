@@ -13,6 +13,7 @@
 #include "inc.h"
 #include "structs.h"
 #include "utils.h"
+#include "vector.h"
 
 char	**matrix_dup(char	**src)
 {
@@ -47,13 +48,13 @@ void	vector_init(t_main *arg)
 {
 	if (arg->pids == NULL)
 	{
-		arg->pids = new_vector(sizeof(pid_t));
+		arg->pids = new(Vector(int));
 		if (arg->pids == NULL)
 			ft_eprintf("mediator:");
 	}
 }
 
-int	mediator(t_main *arg, t_vector *envp)
+int	mediator(t_main *arg, Vector(char_ptr_t) *envp)
 {
 	int		flag;
 	pid_t	pid;
@@ -63,19 +64,18 @@ int	mediator(t_main *arg, t_vector *envp)
 	pid = launcher(arg, envp);
 	if (pid)
 	{
-		if (arg->pids->method->push_front(arg->pids, &pid) == FALSE)
+		if (m_push_front(arg->pids, pid) == FALSE)
 			ft_eprintf("mediator:");
 	}
 	if (flag == TRUE)
 	{
-		arg->pids->pos = 0;
-		while (has_next(arg->pids))
+		for (int i = 0; i < arg->pids->size; i++)
 		{
-			pid = *(pid_t *)next(arg->pids);
+			pid = m_at(arg->pids, i);
 			waitpid(pid, &(arg->status), 0);
 			arg->status = WEXITSTATUS(arg->status);
 		}
-		arg->pids->method->clear(arg->pids);
+		m_clear(arg->pids);
 	}
 	return (0);
 }
