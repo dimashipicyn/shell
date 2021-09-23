@@ -49,7 +49,7 @@ void	parse_expression(t_sh_data *sh_data, Vector(char) *expression)
 		parse_arguments(sh_data, iterExpr);
 		err_not = parse_redirects(sh_data, iterExpr);
 		parse_pipe(sh_data, iterExpr);
-        print(sh_data);
+        //print(sh_data);
 		if (!err_not)// || !sh_data->exec_params.argv[0])
 		{
 			sh_data->exec_params.pipe_out = 0;

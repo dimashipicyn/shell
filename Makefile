@@ -1,7 +1,7 @@
 CC = gcc
 FLAGS = -Wall -Wextra -MMD# -g -fsanitize=address# -Werror
 
-VPATH := launcher:history:builtins:parser:readline:term:signal:include:Dlib:miniobjectc
+VPATH := launcher:history:builtins:parser:readline:term:signal:include:libft:miniobjectc
 
 SRCS = main.c term.c term2.c history1.c history2.c readline.c linenavigation.c\
 	   syntax_validator.c\
@@ -27,13 +27,13 @@ $(NAME): $(OBJ)
 		$(CC) $(FLAGS) $(OBJ) $(LFT) libminiooc.a -o $(NAME) -ltermcap
 
 lib:
-		make -C Dlib
-		cp Dlib/$(LFT) .
+		make -C libft
+		cp libft/$(LFT) .
 		make -C miniobjectc
 		cp miniobjectc/libminiooc.a .
 
 .c.o: $(SRCS)
-		$(CC) $(FLAGS) -c $< -I./include -I./Dlib -I./miniobjectc/include
+		$(CC) $(FLAGS) -c $< -I./include -I./libft -I./miniobjectc/include
 
 clean:
 		@rm -rf $(OBJ) $(DEPENDS)

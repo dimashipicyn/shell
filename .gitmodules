@@ -4,3 +4,6 @@
 [submodule "miniobjectc"]
 	path = miniobjectc
 	url = git@github.com:dimashipicyn/miniobjectc.git
+[submodule "libft"]
+	path = libft
+	url = git@github.com:dimashipicyn/libft.git
