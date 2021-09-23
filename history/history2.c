@@ -2,23 +2,23 @@
 #include "vector.h"
 #include "history.h"
 
-void	history_push_front(t_history *history, t_vector *new_entry)
+void	history_push_front(t_history *history, Vector(char) *new_entry)
 {
 	ft_list_push_front(&(history->list), new_entry);
 	history->size += 1;
 	history->head = 0;
 }
 
-void	history_push_back(t_history *history, t_vector *new_entry)
+void	history_push_back(t_history *history, Vector(char) *new_entry)
 {
 	ft_list_push_back(&(history->list), new_entry);
 	history->size += 1;
 	history->head = 0;
 }
 
-t_vector	*history_next_entry(t_history *history)
+Vector(char)	*history_next_entry(t_history *history)
 {
-	t_vector	*entry;
+    Vector(char)	*entry;
 	t_list		*list;
 
 	if (history->size == 0)
@@ -30,9 +30,9 @@ t_vector	*history_next_entry(t_history *history)
 	return (entry);
 }
 
-t_vector	*history_prev_entry(t_history *history)
+Vector(char)	*history_prev_entry(t_history *history)
 {
-	t_vector	*entry;
+	Vector(char)	*entry;
 	t_list		*list;
 
 	if (history->size == 0)
@@ -44,7 +44,7 @@ t_vector	*history_prev_entry(t_history *history)
 	return (entry);
 }
 
-t_vector	*history_get_entry(t_history *history)
+Vector(char)	*history_get_entry(t_history *history)
 {
 	t_list	*list;
 

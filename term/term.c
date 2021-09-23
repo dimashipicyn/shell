@@ -1,9 +1,6 @@
+#include "minishell.h"
 #include <termios.h>
-#include <unistd.h>
-#include <curses.h>
 #include <term.h>
-#include <stdlib.h>
-#include "libft.h"
 
 static char				g_room_termtype[2048];
 static char				*g_termtype;
@@ -24,7 +21,7 @@ void	set_input_mode(void)
 
 	tcgetattr(STDIN_FILENO, &g_save_attr);
 	tcgetattr (STDIN_FILENO, &attr);
-	attr.c_lflag &= ~(ICANON | ECHO);
+	attr.c_lflag &= ~(ICANON | ECHO | ISIG);
 	tcsetattr (STDIN_FILENO, TCSAFLUSH, &attr);
 }
 /* Clear ICANON and ECHO. */
@@ -33,7 +30,7 @@ void	set_input_mode(void)
 //необходима для tputs
 static int	ft_putint(int c)
 {
-	return (write(STDOUT_FILENO, &c, 1));
+	return (write(2, &c, 1));
 }
 
 void	command(char *s, int x, int y)
@@ -44,11 +41,12 @@ void	command(char *s, int x, int y)
 	ft_bzero(g_buffer, 100);
 }
 
-void	init_term(void)
+BOOLEAN	init_term(void)
 {
 	if (!isatty(STDIN_FILENO))
-		exit(1);
+		return (FALSE);
 	g_termtype = getenv("TERM");
 	if (g_termtype == NULL || tgetent(g_room_termtype, g_termtype) != 1)
-		exit(1);
+		return (FALSE);
+	return (TRUE);
 }
