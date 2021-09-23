@@ -12,8 +12,7 @@ void	parse_pipe(t_sh_data *sh_data, Iterator(char) *iterExpr)
 	    sym = m_next(iterExpr);
 	    if (sym == '|')
 	        sh_data->exec_params.pipe_out = TRUE;
-	    else
-	        m_prev(iterExpr);
+	    m_prev(iterExpr);
 	}
 }
 
@@ -36,6 +35,22 @@ void print(t_sh_data *sh_data)
     for (int i = 0; sh_data->exec_params.argv[i] != 0; i++)
         printf("argv [%d] %s\n", i, sh_data->exec_params.argv[i]);
 }
+
+bool    is_end(Iterator(char) *iterExpr)
+{
+    char ch;
+
+    if (m_has_next(iterExpr)) {
+        ch = m_get(iterExpr);
+        if (ch == ';' || ch == '|') {
+            m_next(iterExpr);
+            return true;
+        }
+        return false;
+    }
+    return true;
+}
+
 void	parse_expression(t_sh_data *sh_data, Vector(char) *expression)
 {
 	BOOLEAN		    err_not;
@@ -45,12 +60,16 @@ void	parse_expression(t_sh_data *sh_data, Vector(char) *expression)
 	iterExpr = $(Iterator(char), expression);
 	while (m_has_next(iterExpr))
 	{
-		errno = 0;
-		parse_arguments(sh_data, iterExpr);
-		err_not = parse_redirects(sh_data, iterExpr);
-		parse_pipe(sh_data, iterExpr);
-        //print(sh_data);
-		if (!err_not)// || !sh_data->exec_params.argv[0])
+	    while (m_has_next(iterExpr)) {
+	        errno = 0;
+	        parse_arguments(sh_data, iterExpr);
+	        err_not = parse_redirects(sh_data, iterExpr);
+	        parse_pipe(sh_data, iterExpr);
+	        //print(sh_data); // debug
+	        if (is_end(iterExpr))
+	            break;
+	    }
+		if (!err_not)
 		{
 			sh_data->exec_params.pipe_out = 0;
 			sh_data->exec_params.pipe_in = 0;

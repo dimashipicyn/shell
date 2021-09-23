@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -Wall -Wextra -MMD# -g -fsanitize=address# -Werror
+FLAGS = -Wall -Wextra -MMD -g -fsanitize=address# -Werror
 
 VPATH := launcher:history:builtins:parser:readline:term:signal:include:libft:miniobjectc
 
